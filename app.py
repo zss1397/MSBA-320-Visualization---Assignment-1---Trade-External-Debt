@@ -211,9 +211,9 @@ fig5.add_trace(go.Bar(name='Commerce', x=comparison_data['Region'], y=comparison
 
 fig5.update_layout(
     barmode='group',
-    height=280,
+    height=200,
     template='plotly_white',
-    margin=dict(l=40, r=40, t=40, b=80),
+    margin=dict(l=20, r=20, t=20, b=60),
     legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
     xaxis_tickangle=-30,
     xaxis_title='District',
@@ -224,8 +224,3 @@ st.plotly_chart(fig5, use_container_width=True)
 
 # Compact footer
 st.markdown("**MSBA 325 Plotly Practice** | Streamlit & Plotly Dashboard")
-
-# Footer
-st.markdown("---")
-st.markdown("**MSBA 325 Plotly Practice Activity** | Created with Streamlit & Plotly")
-st.markdown("Interactive Economic Data Analysis Dashboard")
