@@ -11,50 +11,40 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS for proper title positioning and no scrolling
+# CSS for compact layout and no scrolling
 st.markdown("""
 <style>
     .main .block-container {
-        padding-top: 0rem;
-        padding-bottom: 0.2rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
         padding-left: 1rem;
         padding-right: 1rem;
         max-width: 100%;
     }
     .stPlotlyChart {
-        height: 200px !important;
+        height: 160px !important;
     }
     h1 {
         color: #1f77b4;
         text-align: center;
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         margin-top: 0rem;
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.5rem;
         padding: 0rem;
         line-height: 1.1;
     }
     h3 {
-        font-size: 0.85rem;
-        margin: 0.1rem 0;
+        font-size: 0.8rem;
+        margin: 0.1rem 0 0.2rem 0;
         color: #333;
     }
     div[data-testid="stSidebar"] {
         display: none;
     }
-    .stMetric {
-        text-align: center;
-        padding: 0.1rem;
-    }
-    .stMetric > div {
-        padding: 0.2rem;
-    }
-    .stMetric > div > div {
-        font-size: 0.75rem !important;
-    }
-    .stMetric > div > div > div {
-        font-size: 1.1rem !important;
-    }
     .element-container {
+        margin-bottom: 0.2rem;
+    }
+    .stMarkdown {
         margin-bottom: 0.1rem;
     }
 </style>
@@ -104,18 +94,7 @@ def create_data():
 
 trade_df, debt_df = create_data()
 
-# Compact metrics row
-col_m1, col_m2, col_m3, col_m4 = st.columns(4)
-with col_m1:
-    st.metric("Towns", len(trade_df))
-with col_m2:
-    st.metric("Districts", trade_df['District'].nunique())
-with col_m3:
-    st.metric("Records", len(debt_df))
-with col_m4:
-    st.metric("Years", f"{debt_df['Year'].min()}-{debt_df['Year'].max()}")
-
-# Charts in 3x2 grid layout (better than 5x1)
+# Charts in 3x2 grid layout - minimized heights
 col1, col2, col3 = st.columns(3)
 
 # Row 1: Charts 1, 2, 3
@@ -128,11 +107,12 @@ with col1:
     
     fig1.update_layout(
         barmode='stack',
-        height=200,
+        height=160,
         template='plotly_white',
-        margin=dict(l=30, r=20, t=15, b=50),
-        legend=dict(orientation="h", y=-0.15, x=0.5, xanchor="center"),
-        xaxis_tickangle=-30
+        margin=dict(l=20, r=10, t=5, b=40),
+        legend=dict(orientation="h", y=-0.2, x=0.5, xanchor="center", font=dict(size=8)),
+        xaxis_tickangle=-30,
+        font=dict(size=10)
     )
     st.plotly_chart(fig1, use_container_width=True)
 
@@ -144,9 +124,10 @@ with col2:
                    labels={'Debt': 'Debt (Billions)'})
     fig2.update_traces(line=dict(width=3, color='#2E86C1'))
     fig2.update_layout(
-        height=200,
+        height=160,
         template='plotly_white',
-        margin=dict(l=30, r=20, t=15, b=30)
+        margin=dict(l=20, r=10, t=5, b=25),
+        font=dict(size=10)
     )
     st.plotly_chart(fig2, use_container_width=True)
 
@@ -158,12 +139,12 @@ with col3:
     
     fig3 = px.pie(values=values, names=activities,
                   color_discrete_sequence=['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'])
-    fig3.update_traces(textposition='inside', textinfo='percent', textfont_size=9)
+    fig3.update_traces(textposition='inside', textinfo='percent', textfont_size=8)
     fig3.update_layout(
-        height=200,
+        height=160,
         template='plotly_white',
-        margin=dict(l=15, r=15, t=15, b=15),
-        legend=dict(orientation="h", y=-0.15, x=0.5, xanchor="center", font=dict(size=8))
+        margin=dict(l=10, r=10, t=5, b=10),
+        legend=dict(orientation="h", y=-0.2, x=0.5, xanchor="center", font=dict(size=7))
     )
     st.plotly_chart(fig3, use_container_width=True)
 
@@ -175,10 +156,11 @@ with col4:
     fig4 = px.scatter(debt_df, x='Year', y='Debt', color='Country', size='Debt',
                      labels={'Debt': 'Debt (Billions)'})
     fig4.update_layout(
-        height=200,
+        height=160,
         template='plotly_white',
-        margin=dict(l=40, r=20, t=15, b=40),
-        legend=dict(orientation="h", y=-0.2, x=0.5, xanchor="center")
+        margin=dict(l=30, r=10, t=5, b=35),
+        legend=dict(orientation="h", y=-0.25, x=0.5, xanchor="center", font=dict(size=8)),
+        font=dict(size=10)
     )
     st.plotly_chart(fig4, use_container_width=True)
 
@@ -199,11 +181,12 @@ with col5:
     
     fig5.update_layout(
         barmode='group',
-        height=200,
+        height=160,
         template='plotly_white',
-        margin=dict(l=40, r=20, t=15, b=40),
-        legend=dict(orientation="h", y=-0.2, x=0.5, xanchor="center"),
-        xaxis_tickangle=-20
+        margin=dict(l=30, r=10, t=5, b=35),
+        legend=dict(orientation="h", y=-0.25, x=0.5, xanchor="center", font=dict(size=8)),
+        xaxis_tickangle=-20,
+        font=dict(size=10)
     )
     st.plotly_chart(fig5, use_container_width=True)
 
