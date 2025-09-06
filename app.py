@@ -190,4 +190,4 @@ with col5:
     st.plotly_chart(fig5, use_container_width=True)
 
 # Compact footer
-st.markdown("**MSBA 325 Plotly Practice | Interactive Economic Data Analysis**")
+st.markdown("**MSBA 325 Plotly Practice | Interactive Economic Data Ana
