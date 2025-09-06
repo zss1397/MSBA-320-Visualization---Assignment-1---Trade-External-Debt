@@ -8,28 +8,37 @@ import numpy as np
 st.set_page_config(
     page_title="MSBA 325 Economic Data Dashboard",
     page_icon="📊",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
-# Custom CSS
+# Custom CSS for compact layout
 st.markdown("""
 <style>
     .block-container {
-        padding-top: 2rem;
-        padding-bottom: 1rem;
+        padding-top: 1rem;
+        padding-bottom: 0rem;
+        max-width: 100%;
     }
     .stPlotlyChart {
-        height: 400px !important;
+        height: 250px !important;
     }
     h1 {
         color: #1f77b4;
         text-align: center;
-        padding-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        font-size: 2rem;
     }
     h2 {
         color: #333;
-        border-bottom: 2px solid #1f77b4;
-        padding-bottom: 0.5rem;
+        font-size: 1.2rem;
+        margin-bottom: 0.3rem;
+    }
+    .element-container {
+        margin-bottom: 0.5rem;
+    }
+    div[data-testid="stSidebar"] {
+        display: none;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -37,13 +46,12 @@ st.markdown("""
 # Title
 st.title("MSBA 325 Economic Data Dashboard")
 st.markdown("**Interactive Plotly Visualizations - Trade & External Debt Analysis**")
-st.markdown("---")
 
-# Create sample data that mimics your actual data structure
+# Create sample data
 @st.cache_data
 def create_sample_data():
     # Sample trade data
-    towns = ['Beirut', 'Tripoli', 'Sidon', 'Tyre', 'Zahle', 'Baalbek', 'Nabatieh', 'Jounieh']
+    towns = ['Beirut', 'Tripoli', 'Sidon', 'Tyre', 'Zahle', 'Baalbek']
     regions = ['Aley District', 'Zahle District', 'Matn District', 'Baabda District', 'Akkar District', 'Baalbek-Hermel District']
     
     trade_data = []
@@ -66,15 +74,15 @@ def create_sample_data():
     trade_df = pd.DataFrame(trade_data)
     
     # Sample debt data
-    years = list(range(2010, 2024))
-    countries = ['Lebanon', 'Jordan', 'Syria', 'Iraq', 'Egypt']
+    years = list(range(2015, 2024))
+    countries = ['Lebanon', 'Jordan', 'Syria', 'Iraq']
     
     debt_data = []
     for country in countries:
-        base_debt = np.random.uniform(10000000000, 80000000000)  # 10B to 80B
+        base_debt = np.random.uniform(20000000000, 80000000000)
         for year in years:
-            trend_factor = (year - 2010) * 0.05  # Increasing trend
-            noise = np.random.uniform(-0.2, 0.2)
+            trend_factor = (year - 2015) * 0.08
+            noise = np.random.uniform(-0.1, 0.1)
             debt_value = base_debt * (1 + trend_factor + noise)
             
             debt_data.append({
@@ -85,16 +93,12 @@ def create_sample_data():
             })
     
     debt_df = pd.DataFrame(debt_data)
-    
     return trade_df, debt_df
 
 # Load sample data
 trade_df, debt_df = create_sample_data()
 
-# Display success message
-st.success("Dashboard loaded successfully! Displaying sample economic data visualizations.")
-
-# Create layout
+# Create compact layout - 2x2 grid for first 4 charts
 col1, col2 = st.columns(2)
 
 # VISUALIZATION 1: Stacked Bar Chart
@@ -107,24 +111,22 @@ with col1:
         'Total number of commercial institutions by size - number of large-sized institutions': 'sum'
     }).reset_index()
     
-    institution_data.columns = ['Town', 'Small_Institutions', 'Medium_Institutions', 'Large_Institutions']
-    institution_data['Total'] = (institution_data['Small_Institutions'] + 
-                                institution_data['Medium_Institutions'] + 
-                                institution_data['Large_Institutions'])
-    institution_data = institution_data.sort_values('Total', ascending=True).tail(6)
+    institution_data.columns = ['Town', 'Small', 'Medium', 'Large']
+    institution_data['Total'] = institution_data['Small'] + institution_data['Medium'] + institution_data['Large']
+    institution_data = institution_data.sort_values('Total', ascending=True).tail(5)
     
     fig1 = go.Figure()
-    fig1.add_trace(go.Bar(name='Small', x=institution_data['Town'], y=institution_data['Small_Institutions'], marker_color='lightblue'))
-    fig1.add_trace(go.Bar(name='Medium', x=institution_data['Town'], y=institution_data['Medium_Institutions'], marker_color='orange'))
-    fig1.add_trace(go.Bar(name='Large', x=institution_data['Town'], y=institution_data['Large_Institutions'], marker_color='darkred'))
+    fig1.add_trace(go.Bar(name='Small', x=institution_data['Town'], y=institution_data['Small'], marker_color='lightblue'))
+    fig1.add_trace(go.Bar(name='Medium', x=institution_data['Town'], y=institution_data['Medium'], marker_color='orange'))
+    fig1.add_trace(go.Bar(name='Large', x=institution_data['Town'], y=institution_data['Large'], marker_color='darkred'))
     
     fig1.update_layout(
         barmode='stack',
-        height=400,
-        xaxis_tickangle=-45,
+        height=250,
         template='plotly_white',
-        margin=dict(l=40, r=40, t=40, b=100),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5)
+        margin=dict(l=20, r=20, t=20, b=60),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
+        xaxis_tickangle=-45
     )
     st.plotly_chart(fig1, use_container_width=True)
 
@@ -135,12 +137,12 @@ with col2:
     debt_trends = debt_df.groupby('refPeriod')['Value'].mean().reset_index()
     
     fig2 = px.line(debt_trends, x='refPeriod', y='Value', 
-                  labels={'refPeriod': 'Year', 'Value': 'Average External Debt Value'})
+                  labels={'refPeriod': 'Year', 'Value': 'Avg External Debt'})
     fig2.update_traces(line=dict(width=3, color='#2E86C1'))
     fig2.update_layout(
-        height=400,
+        height=250,
         template='plotly_white',
-        margin=dict(l=40, r=40, t=40, b=40)
+        margin=dict(l=20, r=20, t=20, b=20)
     )
     st.plotly_chart(fig2, use_container_width=True)
 
@@ -155,7 +157,7 @@ with col3:
         'Self Employment': trade_df['Existence of commercial and service activities by type - self employment'].sum(),
         'Public Sector': trade_df['Existence of commercial and service activities by type - public sector'].sum(),
         'Banking': trade_df['Existence of commercial and service activities by type - banking institutions'].sum(),
-        'Service Institutions': trade_df['Existence of commercial and service activities by type - service institutions'].sum(),
+        'Service': trade_df['Existence of commercial and service activities by type - service institutions'].sum(),
         'Commerce': trade_df['Existence of commercial and service activities by type - commerce'].sum()
     }
     
@@ -163,9 +165,9 @@ with col3:
                  color_discrete_sequence=px.colors.qualitative.Set3)
     fig3.update_traces(textposition='inside', textinfo='percent+label')
     fig3.update_layout(
-        height=400,
+        height=250,
         template='plotly_white',
-        margin=dict(l=40, r=40, t=40, b=40)
+        margin=dict(l=20, r=20, t=20, b=20)
     )
     st.plotly_chart(fig3, use_container_width=True)
 
@@ -178,17 +180,17 @@ with col4:
     
     fig4 = px.scatter(debt_scatter_data, x='refPeriod', y='Value', 
                      color='refArea', size='Size_Value',
-                     labels={'refPeriod': 'Year', 'Value': 'External Debt Value', 'refArea': 'Country/Region'})
+                     labels={'refPeriod': 'Year', 'Value': 'External Debt', 'refArea': 'Country'})
     fig4.update_layout(
-        height=400,
+        height=250,
         template='plotly_white',
-        margin=dict(l=40, r=40, t=40, b=40),
+        margin=dict(l=20, r=20, t=20, b=20),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5)
     )
     st.plotly_chart(fig4, use_container_width=True)
 
-# VISUALIZATION 5: Full width grouped bar chart
-st.subheader("5️⃣ Business Activity Distribution Across Top Districts")
+# VISUALIZATION 5: Compact grouped bar chart
+st.subheader("5️⃣ Business Activity Distribution Across Districts")
 
 comparison_data = trade_df.groupby('refArea').agg({
     'Total number of service institutions': 'sum',
@@ -197,59 +199,31 @@ comparison_data = trade_df.groupby('refArea').agg({
     'Existence of commercial and service activities by type - commerce': 'sum'
 }).reset_index()
 
-comparison_data.columns = ['Region', 'Service_Institutions', 'Financial_Institutions', 
-                          'Self_Employment', 'Commerce_Activities']
-
-comparison_data['Total_Activity'] = (comparison_data['Service_Institutions'] + 
-                                   comparison_data['Financial_Institutions'] + 
-                                   comparison_data['Self_Employment'] + 
-                                   comparison_data['Commerce_Activities'])
-
-comparison_data = comparison_data.sort_values('Total_Activity', ascending=False).head(6)
+comparison_data.columns = ['Region', 'Service', 'Financial', 'Self Employment', 'Commerce']
+comparison_data['Total'] = comparison_data['Service'] + comparison_data['Financial'] + comparison_data['Self Employment'] + comparison_data['Commerce']
+comparison_data = comparison_data.sort_values('Total', ascending=False).head(5)
 
 fig5 = go.Figure()
-fig5.add_trace(go.Bar(name='Service Institutions', x=comparison_data['Region'], y=comparison_data['Service_Institutions'], marker_color='#1f77b4'))
-fig5.add_trace(go.Bar(name='Financial Institutions', x=comparison_data['Region'], y=comparison_data['Financial_Institutions'], marker_color='#ff7f0e'))
-fig5.add_trace(go.Bar(name='Self Employment', x=comparison_data['Region'], y=comparison_data['Self_Employment'], marker_color='#2ca02c'))
-fig5.add_trace(go.Bar(name='Commerce Activities', x=comparison_data['Region'], y=comparison_data['Commerce_Activities'], marker_color='#d62728'))
+fig5.add_trace(go.Bar(name='Service', x=comparison_data['Region'], y=comparison_data['Service'], marker_color='#1f77b4'))
+fig5.add_trace(go.Bar(name='Financial', x=comparison_data['Region'], y=comparison_data['Financial'], marker_color='#ff7f0e'))
+fig5.add_trace(go.Bar(name='Self Employment', x=comparison_data['Region'], y=comparison_data['Self Employment'], marker_color='#2ca02c'))
+fig5.add_trace(go.Bar(name='Commerce', x=comparison_data['Region'], y=comparison_data['Commerce'], marker_color='#d62728'))
 
 fig5.update_layout(
     barmode='group',
-    xaxis_tickangle=-30,
-    height=500,
+    height=280,
     template='plotly_white',
-    margin=dict(l=60, r=60, t=60, b=100),
+    margin=dict(l=40, r=40, t=40, b=80),
     legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
+    xaxis_tickangle=-30,
     xaxis_title='District',
-    yaxis_title='Number of Activities/Institutions'
+    yaxis_title='Count'
 )
 
 st.plotly_chart(fig5, use_container_width=True)
 
-# Summary metrics
-st.markdown("---")
-st.subheader("Dataset Summary")
-
-col_a, col_b, col_c, col_d = st.columns(4)
-
-with col_a:
-    st.metric("Total Towns", trade_df['Town'].nunique())
-with col_b:
-    st.metric("Total Regions", trade_df['refArea'].nunique())
-with col_c:
-    st.metric("Debt Records", len(debt_df))
-with col_d:
-    st.metric("Time Range", f"{debt_df['refPeriod'].min()}-{debt_df['refPeriod'].max()}")
-
-# Optional file upload section in sidebar
-st.sidebar.title("Upload Your Own Data (Optional)")
-st.sidebar.markdown("To replace sample data with your actual CSV files:")
-
-trade_file = st.sidebar.file_uploader("Upload Trade CSV", type=['csv'], key="trade")
-debt_file = st.sidebar.file_uploader("Upload External Debt CSV", type=['csv'], key="debt")
-
-if trade_file is not None and debt_file is not None:
-    st.sidebar.success("Custom data uploaded! Refresh the page to use your data.")
+# Compact footer
+st.markdown("**MSBA 325 Plotly Practice** | Streamlit & Plotly Dashboard")
 
 # Footer
 st.markdown("---")
