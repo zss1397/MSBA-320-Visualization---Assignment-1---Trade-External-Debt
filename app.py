@@ -185,7 +185,7 @@ with col4:
     st.plotly_chart(fig4, use_container_width=True)
 
 # Row 3: Chart 5 (full width)
-st.markdown("#### 5️⃣ District Business Activities")
+st.markdown("#### 5️⃣ District Business Activities Comparison")
 
 comp_data = trade_df.groupby('refArea').agg({
     'Total number of service institutions': 'sum',
@@ -197,14 +197,18 @@ comp_data = trade_df.groupby('refArea').agg({
 comp_data.columns = ['Region', 'Service', 'Financial', 'Self Employment', 'Commerce']
 
 fig5 = go.Figure()
-fig5.add_trace(go.Bar(name='Service', x=comp_data['Region'], y=comp_data['Service'], marker_color='#1f77b4'))
-fig5.add_trace(go.Bar(name='Financial', x=comp_data['Region'], y=comp_data['Financial'], marker_color='#ff7f0e'))
+fig5.add_trace(go.Bar(name='Service Institutions', x=comp_data['Region'], y=comp_data['Service'], marker_color='#1f77b4'))
+fig5.add_trace(go.Bar(name='Financial Institutions', x=comp_data['Region'], y=comp_data['Financial'], marker_color='#ff7f0e'))
 fig5.add_trace(go.Bar(name='Self Employment', x=comp_data['Region'], y=comp_data['Self Employment'], marker_color='#2ca02c'))
-fig5.add_trace(go.Bar(name='Commerce', x=comp_data['Region'], y=comp_data['Commerce'], marker_color='#d62728'))
+fig5.add_trace(go.Bar(name='Commerce Activities', x=comp_data['Region'], y=comp_data['Commerce'], marker_color='#d62728'))
 
 fig5.update_layout(
-    barmode='group', height=110, template='plotly_white',
-    margin=dict(l=0, r=0, t=0, b=20), showlegend=False, xaxis_tickangle=-30
+    barmode='group', height=150, template='plotly_white',
+    margin=dict(l=20, r=20, t=20, b=50), 
+    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
+    xaxis_tickangle=-30,
+    xaxis_title="Districts",
+    yaxis_title="Number of Activities/Institutions"
 )
 
 st.plotly_chart(fig5, use_container_width=True)
