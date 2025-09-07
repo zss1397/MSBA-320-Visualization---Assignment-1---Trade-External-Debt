@@ -154,13 +154,19 @@ with col2:
 
 col3, col4 = st.columns(2)
 
-# Visualization 3: NEW - Business Concentration Analysis (FIXED)
+# Visualization 3: NEW - SME Percentage Distribution
 with col3:
-    st.markdown("### Commercial Activity Concentration")
-    fig3 = px.bar(business_conc, x='Town Group', y='Percentage of Institutions',
-                  color='Percentage of Institutions', color_continuous_scale='RdYlBu_r',
-                  text='Percentage of Institutions')
-    fig3.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
+    st.markdown("### SME Dominance Across Towns")
+    sme_distribution = pd.DataFrame({
+        'SME Range': ['90-100% SME', '70-89% SME', '50-69% SME', '0-49% SME'],
+        'Number of Towns': [607, 289, 156, 85],
+        'Percentage of Towns': [53.4, 25.4, 13.7, 7.5]
+    })
+    
+    fig3 = px.bar(sme_distribution, x='SME Range', y='Number of Towns',
+                  color='Number of Towns', color_continuous_scale='Blues',
+                  text='Number of Towns')
+    fig3.update_traces(texttemplate='%{text}', textposition='outside')
     fig3.update_layout(
         height=180,
         template='plotly_white',
@@ -168,8 +174,8 @@ with col3:
         coloraxis_showscale=False,
         font=dict(size=9),
         xaxis_tickangle=-30,
-        yaxis_title='% of Total Institutions',
-        yaxis_range=[0, 45]
+        yaxis_title='Number of Towns',
+        yaxis_range=[0, 650]
     )
     st.plotly_chart(fig3, use_container_width=True)
 
