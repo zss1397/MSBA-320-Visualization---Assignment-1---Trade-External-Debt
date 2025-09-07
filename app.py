@@ -57,7 +57,6 @@ st.markdown("# MSBA 325 Trade Data Deep Dive")
 @st.cache_data
 def load_trade_data():
     # Use corrected fallback data with real values from your dataset
-    st.info("Using your real trade data values...")
     
     # Business size distribution (CORRECT - uses actual counts from your data)
     size_distribution = pd.DataFrame({
