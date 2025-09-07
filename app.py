@@ -64,6 +64,13 @@ def load_trade_data():
         'Percentage': [91.8, 6.2, 2.1]
     })
     
+    # Economic sector data for treemap
+    sector_data = pd.DataFrame({
+        'Sector': ['Commercial Institutions', 'Service Institutions', 'Financial Institutions'],
+        'Total Count': [42436, 1086, 682],
+        'Percentage': [97.6, 2.4, 1.5]
+    })
+    
     # Comprehensive economic activity presence analysis (all 5 binary columns)
     activity_presence = pd.DataFrame({
         'Activity Type': ['Self Employment', 'Commerce', 'Public Sector', 'Service Institutions', 'Banking'],
@@ -86,7 +93,7 @@ def load_trade_data():
         'lon': [35.5018, 35.8339, 35.3783, 35.6178, 35.9017]
     })
     
-    return size_distribution, activity_presence, banking_data, top_commercial_towns, {
+    return size_distribution, sector_data, activity_presence, banking_data, top_commercial_towns, {
         'total_small': 38940,
         'total_medium': 2612,
         'total_large': 884,
@@ -96,7 +103,7 @@ def load_trade_data():
     }
 
 # Load the data
-size_dist, activity_data, banking_data, map_data, metrics = load_trade_data()
+size_dist, sector_data, activity_data, banking_data, map_data, metrics = load_trade_data()
 
 # Key Metrics Row
 col_m1, col_m2, col_m3, col_m4, col_m5 = st.columns(5)
@@ -114,7 +121,7 @@ with col_m5:
 # 5 Trade Visualizations
 col1, col2 = st.columns(2)
 
-# Visualization 1: Business Size Distribution
+# Visualization 1: Business Size Distribution (Donut Chart)
 with col1:
     st.markdown("### Commercial Institution Size Distribution")
     fig1 = px.pie(size_dist, values='Count', names='Institution Size', hole=0.5,
@@ -142,7 +149,9 @@ with col2:
     )
     st.plotly_chart(fig2, use_container_width=True)
 
-# Visualization 3: Comprehensive Economic Activity Presence
+col3, col4 = st.columns(2)
+
+# Visualization 3: Comprehensive Economic Activity Presence (Horizontal Bar)
 with col3:
     st.markdown("### Economic Activity Presence Across Towns")
     fig3 = px.bar(activity_data, y='Activity Type', x='Towns with Activity', orientation='h',
@@ -157,7 +166,7 @@ with col3:
     )
     st.plotly_chart(fig3, use_container_width=True)
 
-# Visualization 4: Banking Accessibility Focus
+# Visualization 4: Banking Accessibility (Vertical Bar)
 with col4:
     st.markdown("### Banking Institution Accessibility")
     fig4 = px.bar(banking_data, x='Banking Access', y='Number of Towns',
@@ -176,7 +185,7 @@ with col4:
     
     st.plotly_chart(fig4, use_container_width=True)
 
-# Visualization 5: Geographic Map of Commercial Centers in Lebanon
+# Visualization 5: Geographic Map of Commercial Centers in Lebanon (Scatter Mapbox)
 st.markdown("### Commercial Centers Distribution Across Lebanon")
 fig5 = px.scatter_mapbox(map_data, 
                         lat='lat', lon='lon', 
