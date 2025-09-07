@@ -64,19 +64,18 @@ def load_trade_data():
         'Percentage': [91.8, 6.2, 2.1]
     })
     
-    # Economic diversification analysis
-    diversification_data = pd.DataFrame({
-        'Diversity Level': ['1 Activity Type', '2 Activity Types', '3 Activity Types', '4 Activity Types', '5 Activity Types'],
-        'Number of Towns': [284, 312, 298, 187, 56],
-        'Risk Level': ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
+    # Public sector presence analysis
+    public_sector_data = pd.DataFrame({
+        'Public Sector Presence': ['Towns with Public Sector', 'Towns without Public Sector'],
+        'Number of Towns': [207, 930],
+        'Percentage': [18.2, 81.8]
     })
     
-    # Service sector penetration analysis
-    service_penetration = pd.DataFrame({
-        'Sector': ['Service Institutions', 'Non-Banking Financial', 'Combined Service+Financial'],
-        'Total Count': [1086, 682, 1768],
-        'Towns with Activity': [320, 180, 420],
-        'Avg per Active Town': [3.4, 3.8, 4.2]
+    # Banking accessibility analysis
+    banking_data = pd.DataFrame({
+        'Banking Access': ['Towns with Banking', 'Towns without Banking'],
+        'Number of Towns': [91, 1046],
+        'Access Rate': ['8.0%', '92.0%']
     })
     
     # Geographic data for Lebanon map
@@ -87,7 +86,7 @@ def load_trade_data():
         'lon': [35.5018, 35.8339, 35.3783, 35.6178, 35.9017]
     })
     
-    return size_distribution, diversification_data, service_penetration, top_commercial_towns, {
+    return size_distribution, public_sector_data, banking_data, top_commercial_towns, {
         'total_small': 38940,
         'total_medium': 2612,
         'total_large': 884,
@@ -97,7 +96,7 @@ def load_trade_data():
     }
 
 # Load the data
-size_dist, diversity_data, service_pen, map_data, metrics = load_trade_data()
+size_dist, public_data, banking_data, map_data, metrics = load_trade_data()
 
 # Key Metrics Row
 col_m1, col_m2, col_m3, col_m4, col_m5 = st.columns(5)
@@ -129,16 +128,33 @@ with col1:
     )
     st.plotly_chart(fig1, use_container_width=True)
 
+# Visualization 2: Sector Distribution
+with col2:
+    st.markdown("### Economic Sector Distribution")
+    sector_data = pd.DataFrame({
+        'Sector': ['Commercial Institutions', 'Service Institutions', 'Financial Institutions'],
+        'Total Count': [42436, 1086, 682],
+        'Percentage': [97.6, 2.4, 1.5]
+    })
+    
+    fig2 = px.bar(sector_data, y='Sector', x='Total Count', orientation='h',
+                  color='Total Count', color_continuous_scale='Viridis')
+    fig2.update_layout(
+        height=180,
+        template='plotly_white',
+        margin=dict(l=80, r=10, t=5, b=25),
+        coloraxis_showscale=False,
+        font=dict(size=10),
+        xaxis_title='Total Institutions'
+    )
+    st.plotly_chart(fig2, use_container_width=True)
+
+col3, col4 = st.columns(2)
+
 # Visualization 3: Public Sector Economic Presence
 with col3:
     st.markdown("### Public Sector Economic Presence")
-    public_sector_data = pd.DataFrame({
-        'Public Sector Presence': ['Towns with Public Sector', 'Towns without Public Sector'],
-        'Number of Towns': [207, 930],  # Based on your dataset structure
-        'Percentage': [18.2, 81.8]
-    })
-    
-    fig3 = px.pie(public_sector_data, values='Number of Towns', names='Public Sector Presence',
+    fig3 = px.pie(public_data, values='Number of Towns', names='Public Sector Presence',
                   color_discrete_sequence=['#2E8B57', '#E8E8E8'])
     fig3.update_traces(textposition='inside', textinfo='percent+label', textfont_size=10)
     fig3.update_layout(
@@ -151,43 +167,20 @@ with col3:
 # Visualization 4: Banking Accessibility
 with col4:
     st.markdown("### Banking Institution Accessibility")
-    banking_data = pd.DataFrame({
-        'Banking Access': ['Towns with Banking', 'Towns without Banking'],
-        'Number of Towns': [91, 1046],  # Based on your dataset
-        'Access Rate': ['8.0%', '92.0%']
-    })
-    
     fig4 = px.bar(banking_data, x='Banking Access', y='Number of Towns',
                   color='Banking Access', color_discrete_sequence=['#1f77b4', '#ff7f0e'])
     fig4.update_layout(
         height=180,
         template='plotly_white',
-        
         margin=dict(l=30, r=10, t=5, b=40),
         font=dict(size=10),
         showlegend=False,
         yaxis_title='Number of Towns'
     )
     # Add percentage labels on bars
-    for i, (access, count) in enumerate(zip(banking_data['Banking Access'], banking_data['Number of Towns'])):
-        rate = banking_data['Access Rate'].iloc[i]
-        fig4.add_annotation(x=i, y=count + 30, text=rate, showarrow=False, font=dict(size=12, color='black'))
+    fig4.add_annotation(x=0, y=91 + 30, text='8.0%', showarrow=False, font=dict(size=12, color='black'))
+    fig4.add_annotation(x=1, y=1046 + 30, text='92.0%', showarrow=False, font=dict(size=12, color='black'))
     
-    st.plotly_chart(fig4, use_container_width=True)
-# Visualization 4: Service Sector Analysis
-with col4:
-    st.markdown("### Service Sector Penetration Analysis")
-    fig4 = px.bar(service_pen, x='Sector', y='Avg per Active Town',
-                  color='Total Count', color_continuous_scale='plasma')
-    fig4.update_layout(
-        height=180,
-        template='plotly_white',
-        margin=dict(l=30, r=10, t=5, b=50),
-        font=dict(size=9),
-        xaxis_tickangle=-30,
-        yaxis_title='Avg Institutions per Active Town',
-        coloraxis_showscale=False
-    )
     st.plotly_chart(fig4, use_container_width=True)
 
 # Visualization 5: Geographic Map of Commercial Centers in Lebanon
@@ -226,8 +219,8 @@ with st.expander("📈 Key Trade Insights"):
         """)
     with col_i2:
         st.markdown("""
-        **Economic Diversification:**
-        - 312 towns have only 2 activity types (highest group)
-        - Only 56 towns have all 5 economic activity types
-        - Most towns have limited economic diversity and resilience
+        **Economic Access & Government Role:**
+        - Only 91 towns (8%) have banking institutions
+        - Public sector present in 207 towns (18.2%)
+        - Significant gaps in financial services accessibility
         """)
