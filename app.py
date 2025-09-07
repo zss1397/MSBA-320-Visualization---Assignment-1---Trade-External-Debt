@@ -169,7 +169,7 @@ with col3:
         font=dict(size=9),
         xaxis_tickangle=-30,
         yaxis_title='% of Total Institutions',
-        yaxis_range=[0, 40]
+        yaxis_range=[0, 45]
     )
     st.plotly_chart(fig3, use_container_width=True)
 
