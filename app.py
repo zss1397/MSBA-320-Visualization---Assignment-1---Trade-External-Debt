@@ -178,7 +178,7 @@ with col3:
         yaxis_range=[0, 650]
     )
     st.plotly_chart(fig3, use_container_width=True)
-
+    
 # Visualization 4: Service Sector Analysis
 with col4:
     st.markdown("### Service Sector Penetration Analysis")
