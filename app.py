@@ -6,7 +6,7 @@ import numpy as np
 
 # Page config
 st.set_page_config(
-    page_title="MSBA 325 Trade Analysis",
+    page_title="Lebanon Trade Sector Analysis",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
