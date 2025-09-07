@@ -129,49 +129,51 @@ with col1:
     )
     st.plotly_chart(fig1, use_container_width=True)
 
-# Visualization 2: Sector Distribution
-with col2:
-    st.markdown("### Economic Sector Distribution")
-    sector_data = pd.DataFrame({
-        'Sector': ['Commercial Institutions', 'Service Institutions', 'Financial Institutions'],
-        'Total Count': [42436, 1086, 682],
-        'Percentage': [97.6, 2.4, 1.5]
+# Visualization 3: Public Sector Economic Presence
+with col3:
+    st.markdown("### Public Sector Economic Presence")
+    public_sector_data = pd.DataFrame({
+        'Public Sector Presence': ['Towns with Public Sector', 'Towns without Public Sector'],
+        'Number of Towns': [207, 930],  # Based on your dataset structure
+        'Percentage': [18.2, 81.8]
     })
     
-    fig2 = px.bar(sector_data, y='Sector', x='Total Count', orientation='h',
-                  color='Total Count', color_continuous_scale='Viridis')
-    fig2.update_layout(
-        height=180,
-        template='plotly_white',
-        margin=dict(l=80, r=10, t=5, b=25),
-        coloraxis_showscale=False,
-        font=dict(size=10),
-        xaxis_title='Total Institutions'
-    )
-    st.plotly_chart(fig2, use_container_width=True)
-
-col3, col4 = st.columns(2)
-
-# Visualization 3: Economic Diversification Analysis
-with col3:
-    st.markdown("### Economic Diversification Across Towns")
-    st.markdown("#### (Self Employment • Commerce • Services • Banking • Public Sector)")
-    fig3 = px.bar(diversity_data, x='Diversity Level', y='Number of Towns',
-                  color='Number of Towns', color_continuous_scale='RdYlGn',
-                  text='Number of Towns')
-    fig3.update_traces(texttemplate='%{text}', textposition='outside')
+    fig3 = px.pie(public_sector_data, values='Number of Towns', names='Public Sector Presence',
+                  color_discrete_sequence=['#2E8B57', '#E8E8E8'])
+    fig3.update_traces(textposition='inside', textinfo='percent+label', textfont_size=10)
     fig3.update_layout(
         height=180,
         template='plotly_white',
-        margin=dict(l=30, r=10, t=5, b=50),
-        coloraxis_showscale=False,
-        font=dict(size=9),
-        xaxis_tickangle=-30,
-        yaxis_title='Number of Towns',
-        yaxis_range=[0, 330]
+        margin=dict(l=10, r=10, t=5, b=10)
     )
     st.plotly_chart(fig3, use_container_width=True)
 
+# Visualization 4: Banking Accessibility
+with col4:
+    st.markdown("### Banking Institution Accessibility")
+    banking_data = pd.DataFrame({
+        'Banking Access': ['Towns with Banking', 'Towns without Banking'],
+        'Number of Towns': [91, 1046],  # Based on your dataset
+        'Access Rate': ['8.0%', '92.0%']
+    })
+    
+    fig4 = px.bar(banking_data, x='Banking Access', y='Number of Towns',
+                  color='Banking Access', color_discrete_sequence=['#1f77b4', '#ff7f0e'])
+    fig4.update_layout(
+        height=180,
+        template='plotly_white',
+        
+        margin=dict(l=30, r=10, t=5, b=40),
+        font=dict(size=10),
+        showlegend=False,
+        yaxis_title='Number of Towns'
+    )
+    # Add percentage labels on bars
+    for i, (access, count) in enumerate(zip(banking_data['Banking Access'], banking_data['Number of Towns'])):
+        rate = banking_data['Access Rate'].iloc[i]
+        fig4.add_annotation(x=i, y=count + 30, text=rate, showarrow=False, font=dict(size=12, color='black'))
+    
+    st.plotly_chart(fig4, use_container_width=True)
 # Visualization 4: Service Sector Analysis
 with col4:
     st.markdown("### Service Sector Penetration Analysis")
