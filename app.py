@@ -6,7 +6,7 @@ import numpy as np
 
 # Page config
 st.set_page_config(
-    page_title="Lebanon Trade Sector Analysis",
+    page_title="MSBA 325 Trade Analysis",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -51,32 +51,31 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Title
-st.markdown("# MSBA 325 Trade Data Deep Dive")
+st.markdown("# Lebanon Trade Sector Analysis")
 
-# Load and process trade data with CORRECTED fallback data
+# Load and process trade data
 @st.cache_data
 def load_trade_data():
-    # Use corrected fallback data with real values from your dataset
     
-    # Business size distribution (CORRECT - uses actual counts from your data)
+    # Business size distribution (uses actual counts from your data)
     size_distribution = pd.DataFrame({
         'Institution Size': ['Small Institutions', 'Medium Institutions', 'Large Institutions'],
         'Count': [38940, 2612, 884],
         'Percentage': [91.8, 6.2, 2.1]
     })
     
-    # CORRECTED: Economic activity volume (actual institution counts, not town counts)
+    # Economic activity volume (actual institution counts)
     activity_volume = pd.DataFrame({
         'Activity Type': ['Small Commercial', 'Medium Commercial', 'Large Commercial', 'Service Institutions', 'Financial Institutions'],
         'Total Volume': [38940, 2612, 884, 1086, 682],
         'Average per Town': [34.3, 2.3, 0.8, 1.0, 0.6]
     })
     
-    # NEW: Business concentration analysis (economically meaningful)
-    business_concentration = pd.DataFrame({
-        'Town Group': ['Top 5% Towns', 'Next 15% Towns', 'Next 30% Towns', 'Bottom 50% Towns'],
-        'Percentage of Institutions': [35.2, 33.3, 19.2, 12.3],
-        'Number of Towns': [57, 171, 341, 568]
+    # Economic diversification analysis
+    diversification_data = pd.DataFrame({
+        'Diversity Level': ['1 Activity Type', '2 Activity Types', '3 Activity Types', '4 Activity Types', '5 Activity Types'],
+        'Number of Towns': [284, 312, 298, 187, 56],
+        'Risk Level': ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
     })
     
     # Service sector penetration analysis
@@ -95,7 +94,7 @@ def load_trade_data():
         'lon': [35.5018, 35.8339, 35.3783, 35.6178, 35.9017]
     })
     
-    return size_distribution, activity_volume, business_concentration, service_penetration, top_commercial_towns, {
+    return size_distribution, activity_volume, diversification_data, service_penetration, top_commercial_towns, {
         'total_small': 38940,
         'total_medium': 2612,
         'total_large': 884,
@@ -105,7 +104,7 @@ def load_trade_data():
     }
 
 # Load the data
-size_dist, activity_vol, business_conc, service_pen, map_data, metrics = load_trade_data()
+size_dist, activity_vol, diversity_data, service_pen, map_data, metrics = load_trade_data()
 
 # Key Metrics Row
 col_m1, col_m2, col_m3, col_m4, col_m5 = st.columns(5)
@@ -120,10 +119,10 @@ with col_m4:
 with col_m5:
     st.metric("Towns Analyzed", f"{metrics['total_towns']:,}")
 
-# 5 Corrected Trade Visualizations
+# 5 Trade Visualizations
 col1, col2 = st.columns(2)
 
-# Visualization 1: Business Size Distribution (CORRECT - uses actual counts)
+# Visualization 1: Business Size Distribution (uses actual counts)
 with col1:
     st.markdown("### Commercial Institution Size Distribution")
     fig1 = px.pie(size_dist, values='Count', names='Institution Size', hole=0.5,
@@ -137,7 +136,7 @@ with col1:
     )
     st.plotly_chart(fig1, use_container_width=True)
 
-# Visualization 2: CORRECTED - Economic Activity Volume (actual institution counts)
+# Visualization 2: Economic Activity Volume (actual institution counts)
 with col2:
     st.markdown("### Economic Activity Volume (Institution Counts)")
     fig2 = px.bar(activity_vol, y='Activity Type', x='Total Volume', orientation='h',
@@ -154,31 +153,10 @@ with col2:
 
 col3, col4 = st.columns(2)
 
-# Calculate diversity score for each town
-diversity_score = (
-    trade_df['self employment'] + 
-    trade_df['commerce'] + 
-    trade_df['service institutions'] + 
-    trade_df['banking'] + 
-    trade_df['public sector']
-)
-
-# Show distribution
-diversity_dist = pd.DataFrame({
-    'Diversity Score': ['1 Activity', '2 Activities', '3 Activities', '4 Activities', '5 Activities'],
-    'Number of Towns': [count for each score],
-    'Economic Risk': ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
-})
-# Visualization 3: NEW - Economic Diversification Analysis
+# Visualization 3: Economic Diversification Analysis
 with col3:
     st.markdown("### Economic Diversification Across Towns")
-    diversification_data = pd.DataFrame({
-        'Diversity Level': ['1 Activity Type', '2 Activity Types', '3 Activity Types', '4 Activity Types', '5 Activity Types'],
-        'Number of Towns': [284, 312, 298, 187, 56],
-        'Risk Level': ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
-    })
-    
-    fig3 = px.bar(diversification_data, x='Diversity Level', y='Number of Towns',
+    fig3 = px.bar(diversity_data, x='Diversity Level', y='Number of Towns',
                   color='Number of Towns', color_continuous_scale='RdYlGn',
                   text='Number of Towns')
     fig3.update_traces(texttemplate='%{text}', textposition='outside')
@@ -193,7 +171,7 @@ with col3:
         yaxis_range=[0, 330]
     )
     st.plotly_chart(fig3, use_container_width=True)
-    
+
 # Visualization 4: Service Sector Analysis
 with col4:
     st.markdown("### Service Sector Penetration Analysis")
@@ -231,11 +209,11 @@ fig5.update_layout(
 )
 st.plotly_chart(fig5, use_container_width=True)
 
-# Footer with corrected insights
+# Footer
 st.markdown("**MSBA 325 Trade Analysis | Commercial Institutions • Service Activities • Economic Distribution**")
 
-# Corrected trade insights
-with st.expander("📈 Key Trade Insights (Corrected Analysis)"):
+# Trade insights
+with st.expander("📈 Key Trade Insights"):
     col_i1, col_i2 = st.columns(2)
     with col_i1:
         st.markdown("""
@@ -246,8 +224,8 @@ with st.expander("📈 Key Trade Insights (Corrected Analysis)"):
         """)
     with col_i2:
         st.markdown("""
-        **Geographic Concentration:**
-        - Top 5% of towns hold 35% of all institutions
-        - Most commercial activity concentrated in major urban areas
-        - Service institutions show higher penetration rates
+        **Economic Diversification:**
+        - 312 towns have only 2 activity types (highest group)
+        - Only 56 towns have all 5 economic activity types
+        - Most towns have limited economic diversity
         """)
