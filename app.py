@@ -64,14 +64,14 @@ def load_trade_data():
         'Percentage': [91.8, 6.2, 2.1]
     })
     
-    # Public sector presence analysis
-    public_sector_data = pd.DataFrame({
-        'Public Sector Presence': ['Towns with Public Sector', 'Towns without Public Sector'],
-        'Number of Towns': [207, 930],
-        'Percentage': [18.2, 81.8]
+    # Comprehensive economic activity presence analysis (all 5 binary columns)
+    activity_presence = pd.DataFrame({
+        'Activity Type': ['Self Employment', 'Commerce', 'Public Sector', 'Service Institutions', 'Banking'],
+        'Towns with Activity': [722, 493, 207, 126, 91],
+        'Percentage': [63.5, 43.4, 18.2, 11.1, 8.0]
     })
     
-    # Banking accessibility analysis
+    # Banking accessibility analysis (detailed)
     banking_data = pd.DataFrame({
         'Banking Access': ['Towns with Banking', 'Towns without Banking'],
         'Number of Towns': [91, 1046],
@@ -86,7 +86,7 @@ def load_trade_data():
         'lon': [35.5018, 35.8339, 35.3783, 35.6178, 35.9017]
     })
     
-    return size_distribution, public_sector_data, banking_data, top_commercial_towns, {
+    return size_distribution, activity_presence, banking_data, top_commercial_towns, {
         'total_small': 38940,
         'total_medium': 2612,
         'total_large': 884,
@@ -96,7 +96,7 @@ def load_trade_data():
     }
 
 # Load the data
-size_dist, public_data, banking_data, map_data, metrics = load_trade_data()
+size_dist, activity_data, banking_data, map_data, metrics = load_trade_data()
 
 # Key Metrics Row
 col_m1, col_m2, col_m3, col_m4, col_m5 = st.columns(5)
@@ -151,20 +151,22 @@ with col2:
 
 col3, col4 = st.columns(2)
 
-# Visualization 3: Public Sector Economic Presence
+# Visualization 3: Comprehensive Economic Activity Presence
 with col3:
-    st.markdown("### Public Sector Economic Presence")
-    fig3 = px.pie(public_data, values='Number of Towns', names='Public Sector Presence',
-                  color_discrete_sequence=['#2E8B57', '#E8E8E8'])
-    fig3.update_traces(textposition='inside', textinfo='percent+label', textfont_size=10)
+    st.markdown("### Economic Activity Presence Across Towns")
+    fig3 = px.bar(activity_data, y='Activity Type', x='Towns with Activity', orientation='h',
+                  color='Towns with Activity', color_continuous_scale='RdYlGn')
     fig3.update_layout(
         height=180,
         template='plotly_white',
-        margin=dict(l=10, r=10, t=5, b=10)
+        margin=dict(l=80, r=10, t=5, b=25),
+        coloraxis_showscale=False,
+        font=dict(size=10),
+        xaxis_title='Number of Towns'
     )
     st.plotly_chart(fig3, use_container_width=True)
 
-# Visualization 4: Banking Accessibility
+# Visualization 4: Banking Accessibility Focus
 with col4:
     st.markdown("### Banking Institution Accessibility")
     fig4 = px.bar(banking_data, x='Banking Access', y='Number of Towns',
@@ -219,8 +221,8 @@ with st.expander("📈 Key Trade Insights"):
         """)
     with col_i2:
         st.markdown("""
-        **Economic Access & Government Role:**
-        - Only 91 towns (8%) have banking institutions
-        - Public sector present in 207 towns (18.2%)
-        - Significant gaps in financial services accessibility
+        **Economic Activity Distribution:**
+        - Self employment most widespread: 722 towns (63.5%)
+        - Commerce activity: 493 towns (43.4%)
+        - Banking severely limited: only 91 towns (8.0%)
         """)
