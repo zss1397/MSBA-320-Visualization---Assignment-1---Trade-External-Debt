@@ -128,28 +128,19 @@ with col1:
     )
     st.plotly_chart(fig1, use_container_width=True)
 
-# Visualization 2: Sector Distribution
+# Visualization 2: Economic Sector Distribution (Treemap)
 with col2:
     st.markdown("### Economic Sector Distribution")
-    sector_data = pd.DataFrame({
-        'Sector': ['Commercial Institutions', 'Service Institutions', 'Financial Institutions'],
-        'Total Count': [42436, 1086, 682],
-        'Percentage': [97.6, 2.4, 1.5]
-    })
-    
-    fig2 = px.bar(sector_data, y='Sector', x='Total Count', orientation='h',
-                  color='Total Count', color_continuous_scale='Viridis')
+    fig2 = px.treemap(sector_data, values='Total Count', names='Sector',
+                      color='Total Count', color_continuous_scale='Viridis')
+    fig2.update_traces(textposition='middle center', textfont_size=12)
     fig2.update_layout(
         height=180,
         template='plotly_white',
-        margin=dict(l=80, r=10, t=5, b=25),
-        coloraxis_showscale=False,
-        font=dict(size=10),
-        xaxis_title='Total Institutions'
+        margin=dict(l=5, r=5, t=5, b=5),
+        coloraxis_showscale=False
     )
     st.plotly_chart(fig2, use_container_width=True)
-
-col3, col4 = st.columns(2)
 
 # Visualization 3: Comprehensive Economic Activity Presence
 with col3:
