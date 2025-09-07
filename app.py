@@ -154,30 +154,21 @@ with col2:
 
 col3, col4 = st.columns(2)
 
-# Visualization 3: NEW - SME Percentage Distribution
-with col3:
-    st.markdown("### SME Dominance Across Towns")
-    sme_distribution = pd.DataFrame({
-        'SME Range': ['90-100% SME', '70-89% SME', '50-69% SME', '0-49% SME'],
-        'Number of Towns': [607, 289, 156, 85],
-        'Percentage of Towns': [53.4, 25.4, 13.7, 7.5]
-    })
-    
-    fig3 = px.bar(sme_distribution, x='SME Range', y='Number of Towns',
-                  color='Number of Towns', color_continuous_scale='Blues',
-                  text='Number of Towns')
-    fig3.update_traces(texttemplate='%{text}', textposition='outside')
-    fig3.update_layout(
-        height=180,
-        template='plotly_white',
-        margin=dict(l=30, r=10, t=5, b=50),
-        coloraxis_showscale=False,
-        font=dict(size=9),
-        xaxis_tickangle=-30,
-        yaxis_title='Number of Towns',
-        yaxis_range=[0, 650]
-    )
-    st.plotly_chart(fig3, use_container_width=True)
+# Calculate diversity score for each town
+diversity_score = (
+    trade_df['self employment'] + 
+    trade_df['commerce'] + 
+    trade_df['service institutions'] + 
+    trade_df['banking'] + 
+    trade_df['public sector']
+)
+
+# Show distribution
+diversity_dist = pd.DataFrame({
+    'Diversity Score': ['1 Activity', '2 Activities', '3 Activities', '4 Activities', '5 Activities'],
+    'Number of Towns': [count for each score],
+    'Economic Risk': ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
+})
     
 # Visualization 4: Service Sector Analysis
 with col4:
