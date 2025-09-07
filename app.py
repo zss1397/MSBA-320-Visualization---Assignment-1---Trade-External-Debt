@@ -50,145 +50,194 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Title positioned at very top
-st.markdown("# MSBA 325 Economic Data Dashboard")
+# Title
+st.markdown("# MSBA 325 Lebanon Economic Dashboard")
 
-# Create sample data
+# Load and process the actual datasets
 @st.cache_data
-def create_data():
-    towns = ['Beirut', 'Tripoli', 'Sidon', 'Tyre']
-    districts = ['Aley', 'Zahle', 'Matn', 'Baabda']
+def load_and_process_data():
+    # Read the uploaded files
+    infra_df = pd.read_csv('85ad3210ab85ae76a878453fad9ce16f_20240905_164730infra.csv')
+    tourism_df = pd.read_csv('551015b5649368dd2612f795c2a9c2d8_20240902_115953tourism.csv')
+    trade_df = pd.read_csv('6e85b4bb294649046214badfdfed7b4d_20240905_151545  trade.csv')
+    debt_df = pd.read_csv('ec4c40221073bbdf6f75b6c6127249c3_20240905_173222  external debt.csv')
     
-    trade_data = []
-    for i, town in enumerate(towns):
-        trade_data.append({
-            'Town': town,
-            'Small': np.random.randint(25, 55),
-            'Medium': np.random.randint(8, 18),
-            'Large': np.random.randint(2, 8),
-            'District': districts[i],
-            'Service': np.random.randint(12, 32),
-            'Financial': np.random.randint(6, 18),
-            'Self_Employment': np.random.randint(18, 45),
-            'Commerce': np.random.randint(22, 55)
-        })
+    # Process infrastructure data for road conditions
+    road_conditions = {
+        'Road Type': ['Main Roads', 'Secondary Roads', 'Agricultural Roads'],
+        'Good': [
+            infra_df['State of the main roads - good'].sum(),
+            infra_df['State of the secondary roads - good'].sum(),
+            infra_df['State of agricultural roads - good'].sum()
+        ],
+        'Acceptable': [
+            infra_df['State of the main roads - acceptable'].sum(),
+            infra_df['State of the secondary roads - acceptable'].sum(),
+            infra_df['State of agricultural roads - acceptable'].sum()
+        ],
+        'Bad': [
+            infra_df['State of the main roads - bad'].sum(),
+            infra_df['State of the secondary roads - bad'].sum(),
+            infra_df['State of agricultural roads - bad'].sum()
+        ]
+    }
     
-    trade_df = pd.DataFrame(trade_data)
+    # Process trade data for commercial institutions
+    trade_summary = {
+        'Institution Size': ['Small', 'Medium', 'Large'],
+        'Count': [
+            trade_df['Total number of commercial institutions by size - number of small institutions'].sum(),
+            trade_df['Total number of commercial institutions by size - number of medium-sized institutions'].sum(),
+            trade_df['Total number of commercial institutions by size - number of large-sized institutions'].sum()
+        ]
+    }
     
-    debt_data = []
-    years = list(range(2019, 2024))
-    countries = ['Lebanon', 'Jordan', 'Syria']
+    # Process tourism facilities
+    tourism_facilities = {
+        'Facility Type': ['Restaurants', 'Cafes', 'Hotels', 'Guest Houses'],
+        'Total Count': [
+            tourism_df['Total number of restaurants'].sum(),
+            tourism_df['Total number of cafes'].sum(),
+            tourism_df['Total number of hotels'].sum(),
+            tourism_df['Total number of guest houses'].sum()
+        ]
+    }
     
-    for country in countries:
-        base_debt = {'Lebanon': 42, 'Jordan': 28, 'Syria': 18}[country]
-        for year in years:
-            trend = (year - 2019) * 2.5
-            debt_data.append({
-                'Country': country,
-                'Year': year,
-                'Debt': base_debt + trend + np.random.uniform(-1.5, 1.5)
-            })
+    # Process transportation methods
+    transport_data = {
+        'Transport Type': ['Taxis', 'Vans', 'Buses'],
+        'Towns': [
+            infra_df['The main means of public transport - taxis'].sum(),
+            infra_df['The main means of public transport - vans'].sum(),
+            infra_df['The main means of public transport - buses'].sum()
+        ]
+    }
     
-    debt_df = pd.DataFrame(debt_data)
-    return trade_df, debt_df
+    # Process debt data - get recent years for key indicators
+    debt_recent = debt_df[debt_df['refPeriod'] >= 2015].copy()
+    debt_trends = debt_recent[debt_recent['Indicator Code'].isin([
+        'DT.DOD.DECT.CD', 'BX.GSR.TOTL.CD', 'DT.TDS.DECT.CD'
+    ])].copy()
+    
+    # Process service activities
+    service_activities = {
+        'Activity Type': ['Self Employment', 'Commerce', 'Service Institutions', 'Banking', 'Public Sector'],
+        'Towns Count': [
+            trade_df['Existence of commercial and service activities by type - self employment'].sum(),
+            trade_df['Existence of commercial and service activities by type - commerce'].sum(),
+            trade_df['Existence of commercial and service activities by type - service institutions'].sum(),
+            trade_df['Existence of commercial and service activities by type - banking institutions'].sum(),
+            trade_df['Existence of commercial and service activities by type - public sector'].sum()
+        ]
+    }
+    
+    return (pd.DataFrame(road_conditions), pd.DataFrame(trade_summary), 
+            pd.DataFrame(tourism_facilities), pd.DataFrame(transport_data),
+            debt_trends, pd.DataFrame(service_activities))
 
-trade_df, debt_df = create_data()
+# Load data
+road_df, trade_inst_df, tourism_fac_df, transport_df, debt_trends_df, service_df = load_and_process_data()
 
-# Charts in 3x2 grid layout - minimized heights
+# Create 3x2 grid layout
 col1, col2, col3 = st.columns(3)
 
-# Row 1: Charts 1, 2, 3
+# Row 1: Infrastructure, Trade, Tourism
 with col1:
-    st.markdown("### Commercial Institutions by Size")
+    st.markdown("### Road Infrastructure Conditions")
     fig1 = go.Figure()
-    fig1.add_trace(go.Bar(name='Small', x=trade_df['Town'], y=trade_df['Small'], marker_color='lightblue'))
-    fig1.add_trace(go.Bar(name='Medium', x=trade_df['Town'], y=trade_df['Medium'], marker_color='orange'))
-    fig1.add_trace(go.Bar(name='Large', x=trade_df['Town'], y=trade_df['Large'], marker_color='darkred'))
+    fig1.add_trace(go.Bar(name='Good', x=road_df['Road Type'], y=road_df['Good'], marker_color='#2ECC71'))
+    fig1.add_trace(go.Bar(name='Acceptable', x=road_df['Road Type'], y=road_df['Acceptable'], marker_color='#F39C12'))
+    fig1.add_trace(go.Bar(name='Bad', x=road_df['Road Type'], y=road_df['Bad'], marker_color='#E74C3C'))
     
     fig1.update_layout(
         barmode='stack',
         height=160,
         template='plotly_white',
-        margin=dict(l=20, r=10, t=5, b=40),
-        legend=dict(orientation="h", y=-0.2, x=0.5, xanchor="center", font=dict(size=8)),
-        xaxis_tickangle=-30,
-        font=dict(size=10)
+        margin=dict(l=30, r=10, t=5, b=40),
+        legend=dict(orientation="h", y=-0.25, x=0.5, xanchor="center", font=dict(size=8)),
+        font=dict(size=10),
+        xaxis_tickangle=-20
     )
     st.plotly_chart(fig1, use_container_width=True)
 
 with col2:
-    st.markdown("### External Debt Trends Over Time")
-    debt_avg = debt_df.groupby('Year')['Debt'].mean().reset_index()
-    
-    fig2 = px.line(debt_avg, x='Year', y='Debt', 
-                   labels={'Debt': 'Debt (Billions)'})
-    fig2.update_traces(line=dict(width=3, color='#2E86C1'))
+    st.markdown("### Commercial Institutions by Size")
+    fig2 = px.pie(trade_inst_df, values='Count', names='Institution Size', hole=0.4,
+                  color_discrete_sequence=['#3498DB', '#E67E22', '#9B59B6'])
+    fig2.update_traces(textposition='inside', textinfo='percent+label', textfont_size=9)
     fig2.update_layout(
         height=160,
         template='plotly_white',
-        margin=dict(l=20, r=10, t=5, b=25),
-        font=dict(size=10)
+        margin=dict(l=10, r=10, t=5, b=10),
+        annotations=[dict(text='Business<br>Scale', x=0.5, y=0.5, font_size=10, showarrow=False)]
     )
     st.plotly_chart(fig2, use_container_width=True)
 
 with col3:
-    st.markdown("### Business Activity Distribution")
-    activities = ['Self Employment', 'Commerce', 'Service', 'Financial']
-    values = [trade_df['Self_Employment'].sum(), trade_df['Commerce'].sum(), 
-             trade_df['Service'].sum(), trade_df['Financial'].sum()]
-    
-    fig3 = px.pie(values=values, names=activities,
-                  color_discrete_sequence=['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'])
-    fig3.update_traces(textposition='inside', textinfo='percent', textfont_size=8)
+    st.markdown("### Tourism Facilities Distribution")
+    fig3 = px.bar(tourism_fac_df, x='Facility Type', y='Total Count',
+                  color='Facility Type', color_discrete_sequence=['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'])
     fig3.update_layout(
         height=160,
         template='plotly_white',
-        margin=dict(l=10, r=10, t=5, b=10),
-        legend=dict(orientation="h", y=-0.2, x=0.5, xanchor="center", font=dict(size=7))
+        margin=dict(l=30, r=10, t=5, b=40),
+        showlegend=False,
+        font=dict(size=10),
+        xaxis_tickangle=-30
     )
     st.plotly_chart(fig3, use_container_width=True)
 
-# Row 2: Charts 4 and 5
-col4, col5 = st.columns(2)
+# Row 2: Transportation, Debt Trends, Service Activities
+col4, col5, col6 = st.columns(3)
 
 with col4:
-    st.markdown("### External Debt by Country")
-    fig4 = px.scatter(debt_df, x='Year', y='Debt', color='Country', size='Debt',
-                     labels={'Debt': 'Debt (Billions)'})
+    st.markdown("### Public Transportation Distribution")
+    fig4 = px.bar(transport_df, y='Transport Type', x='Towns', orientation='h',
+                  color='Transport Type', color_discrete_sequence=['#8E44AD', '#16A085', '#F39C12'])
     fig4.update_layout(
         height=160,
         template='plotly_white',
-        margin=dict(l=30, r=10, t=5, b=35),
-        legend=dict(orientation="h", y=-0.25, x=0.5, xanchor="center", font=dict(size=8)),
+        margin=dict(l=60, r=10, t=5, b=25),
+        showlegend=False,
         font=dict(size=10)
     )
     st.plotly_chart(fig4, use_container_width=True)
 
 with col5:
-    st.markdown("### Business Activities by District")
-    district_data = trade_df.groupby('District').agg({
-        'Service': 'sum',
-        'Financial': 'sum',
-        'Self_Employment': 'sum',
-        'Commerce': 'sum'
-    }).reset_index()
+    st.markdown("### External Debt Trends (Recent Years)")
+    if not debt_trends_df.empty:
+        fig5 = px.line(debt_trends_df, x='refPeriod', y='Value', color='Indicator Code',
+                       line_shape='spline')
+        fig5.update_traces(line=dict(width=2))
+        fig5.update_layout(
+            height=160,
+            template='plotly_white',
+            margin=dict(l=30, r=10, t=5, b=25),
+            legend=dict(orientation="h", y=-0.3, x=0.5, xanchor="center", font=dict(size=7)),
+            font=dict(size=10),
+            yaxis_title='Value (USD)',
+            xaxis_title='Year'
+        )
+    else:
+        fig5 = go.Figure()
+        fig5.add_annotation(text="Debt data processing...", x=0.5, y=0.5, showarrow=False)
+        fig5.update_layout(height=160, template='plotly_white')
     
-    fig5 = go.Figure()
-    fig5.add_trace(go.Bar(name='Service', x=district_data['District'], y=district_data['Service'], marker_color='#1f77b4'))
-    fig5.add_trace(go.Bar(name='Financial', x=district_data['District'], y=district_data['Financial'], marker_color='#ff7f0e'))
-    fig5.add_trace(go.Bar(name='Self Emp', x=district_data['District'], y=district_data['Self_Employment'], marker_color='#2ca02c'))
-    fig5.add_trace(go.Bar(name='Commerce', x=district_data['District'], y=district_data['Commerce'], marker_color='#d62728'))
-    
-    fig5.update_layout(
-        barmode='group',
-        height=160,
-        template='plotly_white',
-        margin=dict(l=30, r=10, t=5, b=35),
-        legend=dict(orientation="h", y=-0.25, x=0.5, xanchor="center", font=dict(size=8)),
-        xaxis_tickangle=-20,
-        font=dict(size=10)
-    )
     st.plotly_chart(fig5, use_container_width=True)
 
+with col6:
+    st.markdown("### Economic Activity Types by Town Count")
+    fig6 = px.bar(service_df, x='Activity Type', y='Towns Count',
+                  color='Towns Count', color_continuous_scale='Viridis')
+    fig6.update_layout(
+        height=160,
+        template='plotly_white',
+        margin=dict(l=30, r=10, t=5, b=50),
+        font=dict(size=9),
+        xaxis_tickangle=-35,
+        coloraxis_showscale=False
+    )
+    st.plotly_chart(fig6, use_container_width=True)
+
 # Footer
-st.markdown("**MSBA 325 Plotly Practice | Interactive Economic Data Analysis**")
+st.markdown("**MSBA 325 Economic Analysis | Infrastructure • Trade • Tourism • External Debt**")
