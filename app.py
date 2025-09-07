@@ -156,6 +156,7 @@ col3, col4 = st.columns(2)
 # Visualization 3: Economic Diversification Analysis
 with col3:
     st.markdown("### Economic Diversification Across Towns")
+    st.markdown("#### (Self Employment • Commerce • Services • Banking • Public Sector)")
     fig3 = px.bar(diversity_data, x='Diversity Level', y='Number of Towns',
                   color='Number of Towns', color_continuous_scale='RdYlGn',
                   text='Number of Towns')
