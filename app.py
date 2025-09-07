@@ -64,13 +64,6 @@ def load_trade_data():
         'Percentage': [91.8, 6.2, 2.1]
     })
     
-    # Economic activity volume (actual institution counts)
-    activity_volume = pd.DataFrame({
-        'Activity Type': ['Small Commercial', 'Medium Commercial', 'Large Commercial', 'Service Institutions', 'Financial Institutions'],
-        'Total Volume': [38940, 2612, 884, 1086, 682],
-        'Average per Town': [34.3, 2.3, 0.8, 1.0, 0.6]
-    })
-    
     # Economic diversification analysis
     diversification_data = pd.DataFrame({
         'Diversity Level': ['1 Activity Type', '2 Activity Types', '3 Activity Types', '4 Activity Types', '5 Activity Types'],
@@ -94,7 +87,7 @@ def load_trade_data():
         'lon': [35.5018, 35.8339, 35.3783, 35.6178, 35.9017]
     })
     
-    return size_distribution, activity_volume, diversification_data, service_penetration, top_commercial_towns, {
+    return size_distribution, diversification_data, service_penetration, top_commercial_towns, {
         'total_small': 38940,
         'total_medium': 2612,
         'total_large': 884,
@@ -104,7 +97,7 @@ def load_trade_data():
     }
 
 # Load the data
-size_dist, activity_vol, diversity_data, service_pen, map_data, metrics = load_trade_data()
+size_dist, diversity_data, service_pen, map_data, metrics = load_trade_data()
 
 # Key Metrics Row
 col_m1, col_m2, col_m3, col_m4, col_m5 = st.columns(5)
@@ -122,7 +115,7 @@ with col_m5:
 # 5 Trade Visualizations
 col1, col2 = st.columns(2)
 
-# Visualization 1: Business Size Distribution (uses actual counts)
+# Visualization 1: Business Size Distribution
 with col1:
     st.markdown("### Commercial Institution Size Distribution")
     fig1 = px.pie(size_dist, values='Count', names='Institution Size', hole=0.5,
@@ -136,7 +129,7 @@ with col1:
     )
     st.plotly_chart(fig1, use_container_width=True)
 
-# Visualization 2: CORRECTED - Sector Distribution
+# Visualization 2: Sector Distribution
 with col2:
     st.markdown("### Economic Sector Distribution")
     sector_data = pd.DataFrame({
@@ -156,6 +149,9 @@ with col2:
         xaxis_title='Total Institutions'
     )
     st.plotly_chart(fig2, use_container_width=True)
+
+col3, col4 = st.columns(2)
+
 # Visualization 3: Economic Diversification Analysis
 with col3:
     st.markdown("### Economic Diversification Across Towns")
@@ -221,15 +217,15 @@ with st.expander("📈 Key Trade Insights"):
     col_i1, col_i2 = st.columns(2)
     with col_i1:
         st.markdown("""
-        **Economic Structure (Institution Counts):**
+        **Economic Structure:**
         - Small enterprises: 38,940 institutions (91.8% by volume)
-        - Service sector: 1,086 institutions across Lebanon
-        - Commercial dominance over financial services
+        - Commercial sector dominates: 42,436 vs 1,768 service/financial
+        - Limited large enterprise presence across Lebanon
         """)
     with col_i2:
         st.markdown("""
         **Economic Diversification:**
         - 312 towns have only 2 activity types (highest group)
         - Only 56 towns have all 5 economic activity types
-        - Most towns have limited economic diversity
+        - Most towns have limited economic diversity and resilience
         """)
