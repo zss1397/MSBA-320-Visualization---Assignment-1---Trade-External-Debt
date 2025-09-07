@@ -169,6 +169,30 @@ diversity_dist = pd.DataFrame({
     'Number of Towns': [count for each score],
     'Economic Risk': ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
 })
+# Visualization 3: NEW - Economic Diversification Analysis
+with col3:
+    st.markdown("### Economic Diversification Across Towns")
+    diversification_data = pd.DataFrame({
+        'Diversity Level': ['1 Activity Type', '2 Activity Types', '3 Activity Types', '4 Activity Types', '5 Activity Types'],
+        'Number of Towns': [284, 312, 298, 187, 56],
+        'Risk Level': ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
+    })
+    
+    fig3 = px.bar(diversification_data, x='Diversity Level', y='Number of Towns',
+                  color='Number of Towns', color_continuous_scale='RdYlGn',
+                  text='Number of Towns')
+    fig3.update_traces(texttemplate='%{text}', textposition='outside')
+    fig3.update_layout(
+        height=180,
+        template='plotly_white',
+        margin=dict(l=30, r=10, t=5, b=50),
+        coloraxis_showscale=False,
+        font=dict(size=9),
+        xaxis_tickangle=-30,
+        yaxis_title='Number of Towns',
+        yaxis_range=[0, 330]
+    )
+    st.plotly_chart(fig3, use_container_width=True)
     
 # Visualization 4: Service Sector Analysis
 with col4:
