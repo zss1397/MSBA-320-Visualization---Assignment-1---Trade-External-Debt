@@ -286,24 +286,22 @@ with col2:
 
 col3, col4 = st.columns(2)
 
-# Visualization 3: CORRECTED - Business Density Distribution (weighted by economic significance)
+# Visualization 3: CORRECTED - Business Concentration Analysis
 with col3:
-    st.markdown("### Business Density Distribution (Economic Weight)")
-    fig3 = go.Figure()
-    fig3.add_trace(go.Bar(name='Number of Towns', x=business_dens['Density Category'], 
-                         y=business_dens['Towns Count'], yaxis='y', marker_color='lightblue'))
-    fig3.add_trace(go.Bar(name='Total Institutions', x=business_dens['Density Category'], 
-                         y=business_dens['Total Institutions'], yaxis='y2', marker_color='darkblue'))
-    
+    st.markdown("### Commercial Activity Concentration")
+    fig3 = px.bar(business_conc, x='Town Group', y='Percentage of Institutions',
+                  color='Percentage of Institutions', color_continuous_scale='RdYlBu_r',
+                  text='Percentage of Institutions')
+    fig3.update_traces(texttemplate='%{text:.1f}%', textposition='outside')
     fig3.update_layout(
         height=180,
         template='plotly_white',
-        margin=dict(l=30, r=30, t=5, b=50),
-        yaxis=dict(title='Towns Count', side='left'),
-        yaxis2=dict(title='Total Institutions', side='right', overlaying='y'),
-        legend=dict(orientation="h", y=-0.3, x=0.5, xanchor="center", font=dict(size=9)),
+        margin=dict(l=30, r=10, t=5, b=50),
+        coloraxis_showscale=False,
         font=dict(size=9),
-        xaxis_tickangle=-30
+        xaxis_tickangle=-30,
+        yaxis_title='% of Total Institutions',
+        yaxis_range=[0, max(business_conc['Percentage of Institutions']) * 1.1]
     )
     st.plotly_chart(fig3, use_container_width=True)
 
