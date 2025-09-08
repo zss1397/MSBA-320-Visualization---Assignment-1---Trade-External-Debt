@@ -185,7 +185,7 @@ with col4:
     st.plotly_chart(fig4, use_container_width=True)
 
 # Visualization 5: Geographic Map of Commercial Centers in Lebanon
-st.markdown("### Commercial Centers Distribution Across Lebanon")
+st.markdown("### Total Business Establishments Distribution Across Lebanon")
 fig5 = px.scatter_mapbox(map_data, 
                         lat='lat', lon='lon', 
                         size='Total_All_Business',
