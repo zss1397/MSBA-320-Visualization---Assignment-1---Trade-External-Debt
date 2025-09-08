@@ -85,15 +85,15 @@ def load_trade_data():
         'Access Rate': ['8.0%', '92.0%']
     })
     
-    # Geographic data for Lebanon map - Based on actual Lebanese governorates
-    top_commercial_towns = pd.DataFrame({
-        'Town': ['Beirut', 'Mount Lebanon', 'North Lebanon', 'South Lebanon', 'Beqaa', 'Nabatieh'],
-        'Total_All_Business': [8500, 12200, 7800, 6200, 4800, 3100],
-        'lat': [33.8938, 33.8869, 34.4361, 33.5630, 33.8467, 33.3781],
-        'lon': [35.5018, 35.5131, 35.8339, 35.3783, 35.9017, 35.4842]
+    # Geographic data for Lebanon map - ALL 25 DISTRICTS
+    all_districts = pd.DataFrame({
+        'Town': ['Zahle', 'Baalbek-Hermel', 'Baabda', 'Sidon', 'Matn', 'Akkar', 'Mount Lebanon', 'Hermel', 'Nabatieh', 'Tyre', 'Keserwan', 'Zgharta', 'Aley', 'Byblos', 'Miniyeh-Danniyeh', 'South', 'Koura', 'Chouf', 'North', 'Rashaya', 'West Bekaa', 'Marjeyoun', 'Bent Jbeil', 'Hasbaya', 'Bsharri'],
+        'Total_All_Business': [10981, 5446, 4152, 3513, 3280, 2360, 1707, 1600, 1544, 1395, 1223, 1184, 1150, 780, 695, 560, 524, 502, 440, 430, 420, 380, 350, 320, 280],
+        'lat': [33.8467, 34.0059, 33.8369, 33.5630, 33.8869, 34.5300, 33.8547, 34.3928, 33.3781, 33.2728, 34.0961, 34.3983, 33.8031, 34.1181, 34.4736, 33.5000, 34.3039, 33.7031, 34.4361, 33.5089, 33.8100, 33.3600, 33.1200, 33.4000, 34.2506],
+        'lon': [35.9017, 36.2181, 35.5131, 35.3783, 35.6500, 36.1181, 35.8623, 36.3667, 35.4842, 35.2039, 35.8478, 35.8972, 35.8031, 35.6481, 36.0061, 35.4000, 35.7244, 35.6131, 35.8339, 35.8200, 35.9500, 35.5900, 35.3800, 35.6500, 36.0139]
     })
     
-    return size_distribution, sector_data, activity_presence, banking_data, top_commercial_towns, {
+    return size_distribution, sector_data, activity_presence, banking_data, all_districts, {
         'total_small': 38940,
         'total_medium': 2612,
         'total_large': 884,
@@ -184,7 +184,7 @@ with col4:
     
     st.plotly_chart(fig4, use_container_width=True)
 
-# Visualization 5: Geographic Map of Commercial Centers in Lebanon (Scatter Mapbox)
+# Visualization 5: Geographic Map of Commercial Centers in Lebanon - ALL 25 DISTRICTS
 st.markdown("### Commercial Centers Distribution Across Lebanon")
 fig5 = px.scatter_mapbox(map_data, 
                         lat='lat', lon='lon', 
@@ -193,13 +193,13 @@ fig5 = px.scatter_mapbox(map_data,
                         hover_name='Town',
                         hover_data={'Total_All_Business': True, 'lat': False, 'lon': False},
                         color_continuous_scale='Viridis',
-                        size_max=20,
+                        size_max=25,
                         zoom=7,
                         center=dict(lat=33.8547, lon=35.8623))
 
 fig5.update_layout(
     mapbox_style="open-street-map",
-    height=250,
+    height=300,
     margin=dict(l=0, r=0, t=0, b=0),
     coloraxis_showscale=True
 )
