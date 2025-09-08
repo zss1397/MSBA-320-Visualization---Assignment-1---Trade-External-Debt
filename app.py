@@ -126,11 +126,16 @@ with col1:
     st.markdown("### Commercial Institution Size Distribution")
     fig1 = px.pie(size_dist, values='Count', names='Institution Size', hole=0.5,
                   color_discrete_sequence=['#FF6B6B', '#4ECDC4', '#45B7D1'])
-    fig1.update_traces(textposition='inside', textinfo='percent+label', textfont_size=10)
+    fig1.update_traces(
+        textposition='outside', 
+        textinfo='label+percent+value',
+        textfont_size=11,
+        texttemplate='%{label}<br>%{percent}<br>%{value:,}'
+    )
     fig1.update_layout(
         height=180,
         template='plotly_white',
-        margin=dict(l=10, r=10, t=5, b=10),
+        margin=dict(l=50, r=50, t=5, b=10),
         annotations=[dict(text=f'Total<br>{size_dist["Count"].sum():,}', x=0.5, y=0.5, font_size=12, showarrow=False)]
     )
     st.plotly_chart(fig1, use_container_width=True)
@@ -140,11 +145,16 @@ with col2:
     st.markdown("### Economic Sector Distribution")
     fig2 = px.pie(sector_data, values='Total Count', names='Sector',
                   color_discrete_sequence=['#FFD700', '#4169E1', '#8A2BE2'])
-    fig2.update_traces(textposition='inside', textinfo='percent+label', textfont_size=10)
+    fig2.update_traces(
+        textposition='outside', 
+        textinfo='label+percent+value',
+        textfont_size=11,
+        texttemplate='%{label}<br>%{percent}<br>%{value:,}'
+    )
     fig2.update_layout(
         height=180,
         template='plotly_white',
-        margin=dict(l=10, r=10, t=5, b=10)
+        margin=dict(l=50, r=50, t=5, b=10)
     )
     st.plotly_chart(fig2, use_container_width=True)
 
