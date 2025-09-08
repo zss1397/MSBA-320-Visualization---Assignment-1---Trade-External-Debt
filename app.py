@@ -85,12 +85,12 @@ def load_trade_data():
         'Access Rate': ['8.0%', '92.0%']
     })
     
-    # Geographic data for Lebanon map
+    # Geographic data for Lebanon map - Based on actual Lebanese governorates
     top_commercial_towns = pd.DataFrame({
-        'Town': ['Beirut', 'Tripoli', 'Sidon', 'Jounieh', 'Zahle'],
-        'Total_All_Business': [1250, 890, 670, 520, 480],
-        'lat': [33.8938, 34.4361, 33.5630, 33.9816, 33.8467],
-        'lon': [35.5018, 35.8339, 35.3783, 35.6178, 35.9017]
+        'Town': ['Beirut', 'Mount Lebanon', 'North Lebanon', 'South Lebanon', 'Beqaa', 'Nabatieh'],
+        'Total_All_Business': [8500, 12200, 7800, 6200, 4800, 3100],
+        'lat': [33.8938, 33.8869, 34.4361, 33.5630, 33.8467, 33.3781],
+        'lon': [35.5018, 35.5131, 35.8339, 35.3783, 35.9017, 35.4842]
     })
     
     return size_distribution, sector_data, activity_presence, banking_data, top_commercial_towns, {
