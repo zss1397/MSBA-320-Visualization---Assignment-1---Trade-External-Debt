@@ -85,15 +85,15 @@ def load_trade_data():
         'Access Rate': ['8.0%', '92.0%']
     })
     
-    # FIXED: Geographic data - Commercial institutions ONLY (reduced numbers)
-    map_districts = pd.DataFrame({
+    # Geographic data for Lebanon map - ALL 25 DISTRICTS (Real Data)
+    top_commercial_towns = pd.DataFrame({
         'Town': ['Zahle', 'Baalbek-Hermel', 'Baabda', 'Sidon', 'Matn', 'Akkar', 'Mount Lebanon', 'Hermel', 'Nabatieh', 'Tyre', 'Keserwan', 'Zgharta', 'Aley', 'Byblos', 'Miniyeh-Danniyeh', 'South', 'Koura', 'Chouf', 'North', 'Rashaya', 'West Bekaa', 'Marjeyoun', 'Bent Jbeil', 'Hasbaya', 'Bsharri'],
-        'Commercial_Only': [8800, 4100, 3000, 2700, 2400, 1850, 1250, 1150, 1050, 950, 850, 800, 750, 580, 480, 380, 360, 340, 300, 280, 260, 240, 220, 200, 180],
+        'Total_All_Business': [10981, 5446, 4152, 3513, 3280, 2360, 1707, 1600, 1544, 1395, 1223, 1184, 1150, 780, 695, 560, 524, 502, 440, 430, 420, 380, 350, 320, 280],
         'lat': [33.8467, 34.0059, 33.8369, 33.5630, 33.8869, 34.5300, 33.8547, 34.3928, 33.3781, 33.2728, 34.0961, 34.3983, 33.8031, 34.1181, 34.4736, 33.5000, 34.3039, 33.7031, 34.4361, 33.5089, 33.8100, 33.3600, 33.1200, 33.4000, 34.2506],
         'lon': [35.9017, 36.2181, 35.5131, 35.3783, 35.6500, 36.1181, 35.8623, 36.3667, 35.4842, 35.2039, 35.8478, 35.8972, 35.8031, 35.6481, 36.0061, 35.4000, 35.7244, 35.6131, 35.8339, 35.8200, 35.9500, 35.5900, 35.3800, 35.6500, 36.0139]
     })
     
-    return size_distribution, sector_data, activity_presence, banking_data, map_districts, {
+    return size_distribution, sector_data, activity_presence, banking_data, top_commercial_towns, {
         'total_small': 38940,
         'total_medium': 2612,
         'total_large': 884,
@@ -103,7 +103,7 @@ def load_trade_data():
     }
 
 # Load the data
-size_dist, sector_data, activity_data, banking_data, commercial_map, metrics = load_trade_data()
+size_dist, sector_data, activity_data, banking_data, map_data, metrics = load_trade_data()
 
 # Key Metrics Row
 col_m1, col_m2, col_m3, col_m4, col_m5 = st.columns(5)
@@ -184,14 +184,14 @@ with col4:
     
     st.plotly_chart(fig4, use_container_width=True)
 
-# Visualization 5: FIXED MAP - Commercial Institutions Only
-st.markdown("### Commercial Institutions Distribution Across Lebanon")
-fig5 = px.scatter_mapbox(commercial_map, 
+# Visualization 5: Geographic Map of Commercial Centers in Lebanon
+st.markdown("### Commercial Centers Distribution Across Lebanon")
+fig5 = px.scatter_mapbox(map_data, 
                         lat='lat', lon='lon', 
-                        size='Commercial_Only',
-                        color='Commercial_Only',
+                        size='Total_All_Business',
+                        color='Total_All_Business',
                         hover_name='Town',
-                        hover_data={'Commercial_Only': True, 'lat': False, 'lon': False},
+                        hover_data={'Total_All_Business': True, 'lat': False, 'lon': False},
                         color_continuous_scale='Viridis',
                         size_max=25,
                         zoom=7,
