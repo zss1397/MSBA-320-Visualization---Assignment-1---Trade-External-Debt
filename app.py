@@ -22,7 +22,7 @@ st.markdown("""
         max-width: 100%;
     }
     .stPlotlyChart {
-        height: 200px !important;
+        height: 180px !important;
     }
     h1 {
         color: #2E8B57;
@@ -121,42 +121,107 @@ with col_m5:
 # 5 Trade Visualizations
 col1, col2 = st.columns(2)
 
-# Visualization 1: Business Size Distribution (Donut Chart) - FIXED
+# Visualization 1: Business Size Distribution (Donut Chart)
 with col1:
     st.markdown("### Commercial Institution Size Distribution")
     fig1 = px.pie(size_dist, values='Count', names='Institution Size', hole=0.5,
                   color_discrete_sequence=['#FF6B6B', '#4ECDC4', '#45B7D1'])
-    
-    # Enhanced text formatting for better visibility
-    fig1.update_traces(
-        textposition='inside', 
-        textinfo='label+percent+value',
-        textfont_size=12,
-        textfont_color='white',
-        texttemplate='<b>%{label}</b><br>%{percent}<br>(%{value:,})',
-        pull=[0.02, 0.02, 0.02]  # Slightly separate slices
-    )
-    
+    fig1.update_traces(textposition='inside', textinfo='percent+label', textfont_size=10)
     fig1.update_layout(
-        height=200,
+        height=180,
         template='plotly_white',
         margin=dict(l=10, r=10, t=5, b=10),
-        font=dict(size=11),
-        annotations=[dict(
-            text=f'<b>Total</b><br>{size_dist["Count"].sum():,}', 
-            x=0.5, y=0.5, 
-            font_size=14, 
-            font_color='black',
-            showarrow=False
-        )]
+        annotations=[dict(text=f'Total<br>{size_dist["Count"].sum():,}', x=0.5, y=0.5, font_size=12, showarrow=False)]
     )
     st.plotly_chart(fig1, use_container_width=True)
 
-# Visualization 2: Economic Sector Distribution (Pie Chart) - FIXED
+# Visualization 2: Economic Sector Distribution (Pie Chart)
 with col2:
     st.markdown("### Economic Sector Distribution")
     fig2 = px.pie(sector_data, values='Total Count', names='Sector',
                   color_discrete_sequence=['#FFD700', '#4169E1', '#8A2BE2'])
+    fig2.update_traces(textposition='inside', textinfo='percent+label', textfont_size=10)
+    fig2.update_layout(
+        height=180,
+        template='plotly_white',
+        margin=dict(l=10, r=10, t=5, b=10)
+    )
+    st.plotly_chart(fig2, use_container_width=True)
+
+col3, col4 = st.columns(2)
+
+# Visualization 3: Comprehensive Economic Activity Presence (Horizontal Bar)
+with col3:
+    st.markdown("### Economic Activity Presence Across Towns")
+    fig3 = px.bar(activity_data, y='Activity Type', x='Towns with Activity', orientation='h',
+                  color='Towns with Activity', color_continuous_scale='RdYlGn')
+    fig3.update_layout(
+        height=180,
+        template='plotly_white',
+        margin=dict(l=80, r=10, t=5, b=25),
+        coloraxis_showscale=False,
+        font=dict(size=10),
+        xaxis_title='Number of Towns'
+    )
+    st.plotly_chart(fig3, use_container_width=True)
+
+# Visualization 4: Banking Accessibility (Vertical Bar)
+with col4:
+    st.markdown("### Banking Institution Accessibility")
+    fig4 = px.bar(banking_data, x='Banking Access', y='Number of Towns',
+                  color='Banking Access', color_discrete_sequence=['#1f77b4', '#ff7f0e'])
+    fig4.update_layout(
+        height=180,
+        template='plotly_white',
+        margin=dict(l=30, r=10, t=5, b=40),
+        font=dict(size=10),
+        showlegend=False,
+        yaxis_title='Number of Towns'
+    )
+    # Add percentage labels on bars
+    fig4.add_annotation(x=0, y=91 + 30, text='8.0%', showarrow=False, font=dict(size=12, color='black'))
+    fig4.add_annotation(x=1, y=1046 + 30, text='92.0%', showarrow=False, font=dict(size=12, color='black'))
     
-    # Enhanced text formatting for better visibility
-    fig2.update
+    st.plotly_chart(fig4, use_container_width=True)
+
+# Visualization 5: Geographic Map of Commercial Centers in Lebanon (Scatter Mapbox)
+st.markdown("### Commercial Centers Distribution Across Lebanon")
+fig5 = px.scatter_mapbox(map_data, 
+                        lat='lat', lon='lon', 
+                        size='Total_All_Business',
+                        color='Total_All_Business',
+                        hover_name='Town',
+                        hover_data={'Total_All_Business': True, 'lat': False, 'lon': False},
+                        color_continuous_scale='Viridis',
+                        size_max=20,
+                        zoom=7,
+                        center=dict(lat=33.8547, lon=35.8623))
+
+fig5.update_layout(
+    mapbox_style="open-street-map",
+    height=250,
+    margin=dict(l=0, r=0, t=0, b=0),
+    coloraxis_showscale=True
+)
+st.plotly_chart(fig5, use_container_width=True)
+
+# Footer
+st.markdown("**MSBA 325 Trade Analysis | Commercial Institutions • Service Activities • Economic Distribution**")
+
+# Trade insights
+with st.expander("📈 Key Trade Insights"):
+    col_i1, col_i2 = st.columns(2)
+    with col_i1:
+        st.markdown("""
+        **Economic Structure:**
+        - Small enterprises: 38,940 institutions (91.8% by volume)
+        - Commercial sector dominates: 42,436 vs 1,768 service/financial
+        - Limited large enterprise presence across Lebanon
+        """)
+    with col_i2:
+        st.markdown("""
+        **Economic Activity Distribution:**
+        - Self employment most widespread: 722 towns (63.5%)
+        - Commerce activity: 493 towns (43.4%)
+        - Banking severely limited: only 91 towns (8.0%)
+        """)
