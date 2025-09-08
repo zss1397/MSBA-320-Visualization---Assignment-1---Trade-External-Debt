@@ -129,14 +129,14 @@ with col1:
     fig1.update_traces(
         textposition='outside', 
         textinfo='label+percent+value',
-        textfont_size=11,
+        textfont_size=14,
         texttemplate='%{label}<br>%{percent}<br>%{value:,}'
     )
     fig1.update_layout(
-        height=180,
+        height=220,
         template='plotly_white',
-        margin=dict(l=50, r=50, t=5, b=10),
-        annotations=[dict(text=f'Total<br>{size_dist["Count"].sum():,}', x=0.5, y=0.5, font_size=12, showarrow=False)]
+        margin=dict(l=80, r=80, t=10, b=20),
+        annotations=[dict(text=f'Total<br>{size_dist["Count"].sum():,}', x=0.5, y=0.5, font_size=14, showarrow=False)]
     )
     st.plotly_chart(fig1, use_container_width=True)
 
@@ -148,13 +148,13 @@ with col2:
     fig2.update_traces(
         textposition='outside', 
         textinfo='label+percent+value',
-        textfont_size=11,
+        textfont_size=14,
         texttemplate='%{label}<br>%{percent}<br>%{value:,}'
     )
     fig2.update_layout(
-        height=180,
+        height=220,
         template='plotly_white',
-        margin=dict(l=50, r=50, t=5, b=10)
+        margin=dict(l=80, r=80, t=10, b=20)
     )
     st.plotly_chart(fig2, use_container_width=True)
 
