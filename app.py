@@ -127,16 +127,17 @@ with col1:
     fig1 = px.pie(size_dist, values='Count', names='Institution Size', hole=0.5,
                   color_discrete_sequence=['#FF6B6B', '#4ECDC4', '#45B7D1'])
     fig1.update_traces(
-        textposition='outside', 
-        textinfo='label+percent+value',
-        textfont_size=14,
-        texttemplate='%{label}<br>%{percent}<br>%{value:,}'
+        textposition='inside', 
+        textinfo='percent+value',
+        textfont_size=16,
+        textfont_color='white',
+        texttemplate='%{percent}<br>%{value:,}'
     )
     fig1.update_layout(
         height=220,
         template='plotly_white',
-        margin=dict(l=80, r=80, t=10, b=20),
-        annotations=[dict(text=f'Total<br>{size_dist["Count"].sum():,}', x=0.5, y=0.5, font_size=14, showarrow=False)]
+        margin=dict(l=20, r=20, t=10, b=20),
+        annotations=[dict(text=f'Total<br>{size_dist["Count"].sum():,}', x=0.5, y=0.5, font_size=16, showarrow=False)]
     )
     st.plotly_chart(fig1, use_container_width=True)
 
@@ -146,15 +147,16 @@ with col2:
     fig2 = px.pie(sector_data, values='Total Count', names='Sector',
                   color_discrete_sequence=['#FFD700', '#4169E1', '#8A2BE2'])
     fig2.update_traces(
-        textposition='outside', 
-        textinfo='label+percent+value',
-        textfont_size=14,
-        texttemplate='%{label}<br>%{percent}<br>%{value:,}'
+        textposition='inside', 
+        textinfo='percent+value',
+        textfont_size=16,
+        textfont_color='white',
+        texttemplate='%{percent}<br>%{value:,}'
     )
     fig2.update_layout(
         height=220,
         template='plotly_white',
-        margin=dict(l=80, r=80, t=10, b=20)
+        margin=dict(l=20, r=20, t=10, b=20)
     )
     st.plotly_chart(fig2, use_container_width=True)
 
