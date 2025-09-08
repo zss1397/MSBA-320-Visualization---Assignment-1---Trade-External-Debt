@@ -48,56 +48,6 @@ st.markdown("""
         margin-bottom: 0.1rem;
     }
 </style>
-import streamlit as st
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-import numpy as np
-
-# Page config
-st.set_page_config(
-    page_title="MSBA 325 Trade Analysis",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
-
-# CSS for compact layout
-st.markdown("""
-<style>
-    .main .block-container {
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        max-width: 100%;
-    }
-    .stPlotlyChart {
-        height: 200px !important;
-    }
-    h1 {
-        color: #2E8B57;
-        text-align: center;
-        font-size: 1.8rem;
-        margin-top: 0rem;
-        margin-bottom: 0.5rem;
-        padding: 0rem;
-        line-height: 1.1;
-    }
-    h3 {
-        font-size: 0.85rem;
-        margin: 0.1rem 0 0.2rem 0;
-        color: #333;
-    }
-    div[data-testid="stSidebar"] {
-        display: none;
-    }
-    .element-container {
-        margin-bottom: 0.2rem;
-    }
-    .stMarkdown {
-        margin-bottom: 0.1rem;
-    }
-</style>
 """, unsafe_allow_html=True)
 
 # Title
