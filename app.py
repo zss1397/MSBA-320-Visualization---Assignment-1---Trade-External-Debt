@@ -22,7 +22,7 @@ st.markdown("""
         max-width: 100%;
     }
     .stPlotlyChart {
-        height: 180px !important;
+        height: 200px !important;
     }
     h1 {
         color: #2E8B57;
@@ -121,87 +121,160 @@ with col_m5:
 # 5 Trade Visualizations
 col1, col2 = st.columns(2)
 
-# Visualization 1: Business Size Distribution (Donut Chart)
+# Visualization 1: Business Size Distribution (Donut Chart) - FIXED
 with col1:
     st.markdown("### Commercial Institution Size Distribution")
     fig1 = px.pie(size_dist, values='Count', names='Institution Size', hole=0.5,
                   color_discrete_sequence=['#FF6B6B', '#4ECDC4', '#45B7D1'])
-    fig1.update_traces(textposition='inside', textinfo='percent+label', textfont_size=10)
+    
+    # Enhanced text formatting for better visibility
+    fig1.update_traces(
+        textposition='inside', 
+        textinfo='label+percent+value',
+        textfont_size=12,
+        textfont_color='white',
+        texttemplate='<b>%{label}</b><br>%{percent}<br>(%{value:,})',
+        pull=[0.02, 0.02, 0.02]  # Slightly separate slices
+    )
+    
     fig1.update_layout(
-        height=180,
+        height=200,
         template='plotly_white',
         margin=dict(l=10, r=10, t=5, b=10),
-        annotations=[dict(text=f'Total<br>{size_dist["Count"].sum():,}', x=0.5, y=0.5, font_size=12, showarrow=False)]
+        font=dict(size=11),
+        annotations=[dict(
+            text=f'<b>Total</b><br>{size_dist["Count"].sum():,}', 
+            x=0.5, y=0.5, 
+            font_size=14, 
+            font_color='black',
+            showarrow=False
+        )]
     )
     st.plotly_chart(fig1, use_container_width=True)
 
-# Visualization 2: Economic Sector Distribution (Pie Chart)
+# Visualization 2: Economic Sector Distribution (Pie Chart) - FIXED
 with col2:
     st.markdown("### Economic Sector Distribution")
     fig2 = px.pie(sector_data, values='Total Count', names='Sector',
                   color_discrete_sequence=['#FFD700', '#4169E1', '#8A2BE2'])
-    fig2.update_traces(textposition='inside', textinfo='percent+label', textfont_size=10)
+    
+    # Enhanced text formatting for better visibility
+    fig2.update_traces(
+        textposition='inside', 
+        textinfo='label+percent+value',
+        textfont_size=12,
+        textfont_color='white',
+        texttemplate='<b>%{label}</b><br>%{percent}<br>(%{value:,})',
+        pull=[0.02, 0.05, 0.05]  # Pull smaller slices out more
+    )
+    
     fig2.update_layout(
-        height=180,
+        height=200,
         template='plotly_white',
-        margin=dict(l=10, r=10, t=5, b=10)
+        margin=dict(l=10, r=10, t=5, b=10),
+        font=dict(size=11)
     )
     st.plotly_chart(fig2, use_container_width=True)
 
 col3, col4 = st.columns(2)
 
-# Visualization 3: Comprehensive Economic Activity Presence (Horizontal Bar)
+# Visualization 3: Comprehensive Economic Activity Presence (Horizontal Bar) - FIXED
 with col3:
     st.markdown("### Economic Activity Presence Across Towns")
     fig3 = px.bar(activity_data, y='Activity Type', x='Towns with Activity', orientation='h',
-                  color='Towns with Activity', color_continuous_scale='RdYlGn')
+                  color='Towns with Activity', color_continuous_scale='RdYlGn',
+                  text='Towns with Activity')
+    
+    # Add value labels and percentages on bars
+    fig3.update_traces(
+        texttemplate='<b>%{x}</b> towns<br>(%{customdata:.1f}%)',
+        textposition='middle right',
+        textfont_size=11,
+        textfont_color='black',
+        customdata=activity_data['Percentage']
+    )
+    
     fig3.update_layout(
-        height=180,
+        height=200,
         template='plotly_white',
-        margin=dict(l=80, r=10, t=5, b=25),
+        margin=dict(l=120, r=80, t=5, b=25),
         coloraxis_showscale=False,
-        font=dict(size=10),
-        xaxis_title='Number of Towns'
+        font=dict(size=11),
+        xaxis_title='Number of Towns',
+        yaxis_title=None
     )
     st.plotly_chart(fig3, use_container_width=True)
 
-# Visualization 4: Banking Accessibility (Vertical Bar)
+# Visualization 4: Banking Accessibility (Vertical Bar) - FIXED
 with col4:
     st.markdown("### Banking Institution Accessibility")
     fig4 = px.bar(banking_data, x='Banking Access', y='Number of Towns',
-                  color='Banking Access', color_discrete_sequence=['#1f77b4', '#ff7f0e'])
-    fig4.update_layout(
-        height=180,
-        template='plotly_white',
-        margin=dict(l=30, r=10, t=5, b=40),
-        font=dict(size=10),
-        showlegend=False,
-        yaxis_title='Number of Towns'
+                  color='Banking Access', color_discrete_sequence=['#1f77b4', '#ff7f0e'],
+                  text='Number of Towns')
+    
+    # Enhanced bar labels with both count and percentage
+    fig4.update_traces(
+        texttemplate='<b>%{y:,}</b><br>towns<br>(%{customdata})',
+        textposition='outside',
+        textfont_size=12,
+        textfont_color='black',
+        customdata=banking_data['Access Rate']
     )
-    # Add percentage labels on bars
-    fig4.add_annotation(x=0, y=91 + 30, text='8.0%', showarrow=False, font=dict(size=12, color='black'))
-    fig4.add_annotation(x=1, y=1046 + 30, text='92.0%', showarrow=False, font=dict(size=12, color='black'))
+    
+    fig4.update_layout(
+        height=200,
+        template='plotly_white',
+        margin=dict(l=30, r=10, t=40, b=60),
+        font=dict(size=11),
+        showlegend=False,
+        yaxis_title='Number of Towns',
+        xaxis_title=None
+    )
     
     st.plotly_chart(fig4, use_container_width=True)
 
-# Visualization 5: Geographic Map of Commercial Centers in Lebanon (Scatter Mapbox)
+# Visualization 5: Geographic Map of Commercial Centers in Lebanon (Scatter Mapbox) - ENHANCED
 st.markdown("### Commercial Centers Distribution Across Lebanon")
+
+# Create custom hover text
+map_data['hover_text'] = map_data.apply(
+    lambda row: f"<b>{row['Town']}</b><br>Businesses: {row['Total_All_Business']:,}", 
+    axis=1
+)
+
 fig5 = px.scatter_mapbox(map_data, 
                         lat='lat', lon='lon', 
                         size='Total_All_Business',
                         color='Total_All_Business',
                         hover_name='Town',
-                        hover_data={'Total_All_Business': True, 'lat': False, 'lon': False},
+                        hover_data={'Total_All_Business': ':,', 'lat': False, 'lon': False},
                         color_continuous_scale='Viridis',
-                        size_max=20,
+                        size_max=25,
                         zoom=7,
                         center=dict(lat=33.8547, lon=35.8623))
 
+# Add text labels for major cities
+fig5.add_trace(go.Scattermapbox(
+    lat=map_data['lat'],
+    lon=map_data['lon'],
+    mode='text',
+    text=[f'<b>{town}</b><br>{count:,}' for town, count in zip(map_data['Town'], map_data['Total_All_Business'])],
+    textfont=dict(size=10, color='black'),
+    textposition='top center',
+    showlegend=False,
+    hoverinfo='skip'
+))
+
 fig5.update_layout(
     mapbox_style="open-street-map",
-    height=250,
+    height=300,
     margin=dict(l=0, r=0, t=0, b=0),
-    coloraxis_showscale=True
+    coloraxis_showscale=True,
+    coloraxis_colorbar=dict(
+        title="Business Count",
+        titlefont_size=12,
+        tickfont_size=10
+    )
 )
 st.plotly_chart(fig5, use_container_width=True)
 
