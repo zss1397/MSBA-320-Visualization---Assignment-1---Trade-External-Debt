@@ -188,10 +188,10 @@ with col4:
 st.markdown("### Commercial Institutions Distribution Across Lebanon")
 fig5 = px.scatter_mapbox(map_data, 
                         lat='lat', lon='lon', 
-                        size='Total_Commercial_Business',
-                        color='Total_Commercial_Business',
+                        size='Total_All_Business',
+                        color='Total_All_Business',
                         hover_name='Town',
-                        hover_data={'Total_Commercial_Business': True, 'lat': False, 'lon': False},
+                        hover_data={'Total_All_Business': True, 'lat': False, 'lon': False},
                         color_continuous_scale='Viridis',
                         size_max=25,
                         zoom=7,
