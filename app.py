@@ -184,14 +184,14 @@ with col4:
     
     st.plotly_chart(fig4, use_container_width=True)
 
-# Visualization 5: Geographic Map of Commercial Centers in Lebanon - ALL 25 DISTRICTS
-st.markdown("### Commercial Centers Distribution Across Lebanon")
+# Visualization 5: Geographic Map of Commercial Institutions Distribution - ALL 25 DISTRICTS
+st.markdown("### Commercial Institutions Distribution Across Lebanon")
 fig5 = px.scatter_mapbox(map_data, 
                         lat='lat', lon='lon', 
-                        size='Total_All_Business',
-                        color='Total_All_Business',
+                        size='Total_Commercial_Business',
+                        color='Total_Commercial_Business',
                         hover_name='Town',
-                        hover_data={'Total_All_Business': True, 'lat': False, 'lon': False},
+                        hover_data={'Total_Commercial_Business': True, 'lat': False, 'lon': False},
                         color_continuous_scale='Viridis',
                         size_max=25,
                         zoom=7,
