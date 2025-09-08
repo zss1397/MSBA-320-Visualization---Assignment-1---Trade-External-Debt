@@ -22,7 +22,7 @@ st.markdown("""
         max-width: 100%;
     }
     .stPlotlyChart {
-        height: 180px !important;
+        height: 400px !important;
     }
     h1 {
         color: #2E8B57;
