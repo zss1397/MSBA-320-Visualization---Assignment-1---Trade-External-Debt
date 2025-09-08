@@ -140,11 +140,16 @@ with col2:
     st.markdown("### Economic Sector Distribution")
     fig2 = px.pie(sector_data, values='Total Count', names='Sector',
                   color_discrete_sequence=['#FFD700', '#4169E1', '#8A2BE2'])
-    fig2.update_traces(textposition='inside', textinfo='percent+label', textfont_size=10)
+    fig2.update_traces(
+        textposition='outside', 
+        textinfo='label+percent+value', 
+        textfont_size=11,
+        texttemplate='%{label}<br>%{percent}<br>%{value:,}'
+    )
     fig2.update_layout(
         height=180,
         template='plotly_white',
-        margin=dict(l=10, r=10, t=5, b=10)
+        margin=dict(l=40, r=40, t=5, b=10)
     )
     st.plotly_chart(fig2, use_container_width=True)
 
